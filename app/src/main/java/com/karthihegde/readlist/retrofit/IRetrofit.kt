@@ -1,7 +1,6 @@
 package com.karthihegde.readlist.retrofit
 
 import com.karthihegde.readlist.retrofit.data.BookList
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
