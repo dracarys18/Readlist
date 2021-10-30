@@ -3,12 +3,11 @@ package com.karthihegde.readlist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,14 +24,16 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.retrofit.data.BookList
+import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.retrofit.getBookFromSearch
 import com.karthihegde.readlist.retrofit.navigation.Navigation
 import com.karthihegde.readlist.retrofit.navigation.Screens
@@ -61,32 +62,75 @@ fun DiscoverScreen(navHostController: NavHostController) {
         Scaffold(topBar = {
             SearchView(text = text)
         }, bottomBar = { BottomBar(navHostController, screens) }) {
-            DisplayResults(resultList = booklist)
+            Column(modifier = Modifier.padding(it)) {
+                DisplayResults(navHostController, resultList = booklist)
+            }
         }
     }
 }
 
 @Composable
-fun DisplayResults(resultList: MutableState<BookList?>) {
+fun SearchResults(navHostController: NavHostController, item: Item) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = { /* todo */ })
+            .padding(
+                start = 16.dp,
+                top = 8.dp,
+                end = 16.dp,
+                bottom = 8.dp
+            )
+            .wrapContentWidth(Alignment.Start)
+    ) {
+        val imagelink = item.volumeInfo.imageLinks
+        if (imagelink == null) {
+            val placeholder =
+                if (isSystemInDarkTheme()) R.drawable.ic_book_placeholder_dark else R.drawable.ic_book_placeholder
+            Image(
+                painter = painterResource(id = placeholder),
+                contentDescription = "",
+                modifier = Modifier.size(100.dp)
+            )
+        } else {
+            Image(
+                painter = rememberImagePainter(
+                    item.volumeInfo.imageLinks.thumbnail.replace(
+                        "http://",
+                        "https://"
+                    )
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(100.dp)
+            )
+        }
+
+        Column {
+            Text(
+                text = item.volumeInfo.title,
+                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.h6
+            )
+
+            val authors = if (item.volumeInfo.authors != null)
+                "Authors:- " + item.volumeInfo.authors.joinToString(",")
+            else
+                "Authors:- Unknown"
+            Text(
+                text = authors,
+                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.caption
+            )
+        }
+    }
+}
+
+@Composable
+fun DisplayResults(navHostController: NavHostController, resultList: MutableState<BookList?>) {
     if (resultList.value != null) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            items(resultList.value!!.items) { item ->
-                Text(
-                    text = item.volumeInfo.title,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = { /* todo */ })
-                        .padding(
-                            start = 16.dp,
-                            top = 8.dp,
-                            end = 16.dp,
-                            bottom = 8.dp
-                        )
-                        .wrapContentWidth(Alignment.Start),
-                    style = MaterialTheme.typography.h4
-                )
+            items(resultList.value!!.items.take(30)) { item ->
+                SearchResults(navHostController = navHostController, item = item)
             }
         }
     }

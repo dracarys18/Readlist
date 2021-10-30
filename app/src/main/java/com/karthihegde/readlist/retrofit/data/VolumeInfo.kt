@@ -2,13 +2,13 @@ package com.karthihegde.readlist.retrofit.data
 
 data class VolumeInfo(
     val allowAnonLogging: Boolean,
-    val authors: List<String>,
+    val authors: List<String>?,
     val averageRating: Float,
     val canonicalVolumeLink: String,
     val categories: List<String>,
     val contentVersion: String,
     val description: String,
-    val imageLinks: ImageLinks,
+    val imageLinks: ImageLinks?,
     val industryIdentifiers: List<IndustryIdentifier>,
     val infoLink: String,
     val language: String,
