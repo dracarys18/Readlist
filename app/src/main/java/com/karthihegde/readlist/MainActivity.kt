@@ -4,17 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +24,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -113,7 +114,7 @@ fun SearchResults(navHostController: NavHostController, item: Item) {
             )
 
             val authors = if (item.volumeInfo.authors != null)
-                "Authors:- " + item.volumeInfo.authors.joinToString(",")
+                "Authors:-" + item.volumeInfo.authors.joinToString(",")
             else
                 "Authors:- Unknown"
             Text(
@@ -121,6 +122,18 @@ fun SearchResults(navHostController: NavHostController, item: Item) {
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.caption
             )
+            Row {
+                Icon(Icons.Filled.Star, contentDescription = "", modifier = Modifier.size(15.dp))
+                Text(
+                    text = item.volumeInfo.averageRating.toString(),
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            val code =
+                if (item.saleInfo.listPrice == null) "" else item.saleInfo.listPrice.currencyCode
+            val price =
+                if (item.saleInfo.listPrice == null) "Unknown" else item.saleInfo.listPrice.amount
+            Text(text = code + price, style = MaterialTheme.typography.caption)
         }
     }
 }
@@ -144,11 +157,12 @@ fun SearchView(text: MutableState<TextFieldValue>) {
         mutableStateOf(Icons.Filled.Search)
     }
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
-    TopAppBar(
-        elevation = 8.dp,
-        backgroundColor = Color.Transparent,
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.padding(5.dp),
         contentColor = Color.White
     ) {
+        val bordercolor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
         TextField(
             value = text.value,
             onValueChange = { value ->
@@ -163,7 +177,9 @@ fun SearchView(text: MutableState<TextFieldValue>) {
                         Icons.Filled.Search
                     }
                 }
-                .fillMaxWidth(1f),
+                .fillMaxWidth(1f)
+                .padding(top = 5.dp, start = 3.dp, end = 3.dp)
+                .border(1.dp, color = bordercolor, shape = RoundedCornerShape(12.dp)),
             leadingIcon = {
                 IconButton(onClick = {
                     if (leadingIcon == Icons.Filled.Clear && text.value.text.isNotEmpty()) {
@@ -180,7 +196,6 @@ fun SearchView(text: MutableState<TextFieldValue>) {
             placeholder = {
                 Text(text = "Search Any Book You Want")
             },
-            shape = RectangleShape,
             keyboardActions = KeyboardActions(onDone = {
                 focusmanager.clearFocus(true)
                 val scope = CoroutineScope(Job() + Dispatchers.IO)
@@ -202,7 +217,9 @@ fun BottomBar(navHostController: NavHostController, barlist: List<Screens>) {
     BottomAppBar {
         val navBackStackEntry by navHostController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-        BottomNavigation(backgroundColor = MaterialTheme.colors.background) {
+        BottomNavigation(
+            backgroundColor = MaterialTheme.colors.background,
+        ) {
             barlist.forEach {
                 BottomNavigationItem(
                     icon = { Icon(it.icon, contentDescription = "") },
