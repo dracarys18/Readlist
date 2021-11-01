@@ -1,5 +1,9 @@
 package com.karthihegde.readlist.retrofit.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class AccessInfo(
     val accessViewStatus: String,
     val country: String,
@@ -11,4 +15,4 @@ data class AccessInfo(
     val textToSpeechPermission: String,
     val viewability: String,
     val webReaderLink: String
-)
+) : Parcelable
