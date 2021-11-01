@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -9,31 +8,40 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import com.karthihegde.readlist.R
 import com.karthihegde.readlist.book
 
 @Composable
 fun BookDetailView(navHostController: NavController) {
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
     Scaffold {
         LazyColumn(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()
+                .placeholder(visible = isLoading, highlight = PlaceholderHighlight.shimmer())
         ) {
             item {
                 book.value?.let {
+                    //if value is not null isloading is false
+                    isLoading = false
+
                     Card(
                         modifier = Modifier.fillMaxSize(),
                         shape = RectangleShape
@@ -105,12 +113,8 @@ fun BookDetailView(navHostController: NavController) {
                             }
                         }
                     }
-                } ?: run {
-                    Toast.makeText(LocalContext.current, "Loading My Man", Toast.LENGTH_SHORT)
-                        .show()
                 }
             }
-
         }
     }
 }
