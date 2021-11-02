@@ -33,6 +33,7 @@ import com.karthihegde.readlist.booklist
 import com.karthihegde.readlist.retrofit.data.BookList
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.retrofit.getBookFromSearch
+import com.karthihegde.readlist.retrofit.getCurrencySymbol
 import com.karthihegde.readlist.retrofit.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.retrofit.navigation.screens.Screens
 import kotlinx.coroutines.CoroutineScope
@@ -165,9 +166,10 @@ fun SearchResults(navHostController: NavController, item: Item) {
                 )
             }
             val code =
-                if (item.saleInfo.listPrice == null) "" else item.saleInfo.listPrice.currencyCode
+                if (item.saleInfo.retailPrice == null) "" else getCurrencySymbol(item.saleInfo.retailPrice.currencyCode)
+                    ?: ""
             val price =
-                if (item.saleInfo.listPrice == null) "Unknown" else item.saleInfo.listPrice.amount
+                if (item.saleInfo.retailPrice == null) "Unknown" else item.saleInfo.retailPrice.amount
             Text(text = code + price, style = MaterialTheme.typography.caption)
         }
     }

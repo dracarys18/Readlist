@@ -10,6 +10,6 @@ data class SaleInfo(
     val isEbook: Boolean,
     val listPrice: ListPrice?,
     val offers: List<Offer>,
-    val retailPrice: RetailPriceX,
+    val retailPrice: RetailPriceX?,
     val saleability: String
 ) : Parcelable
