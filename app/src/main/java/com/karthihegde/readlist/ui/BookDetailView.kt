@@ -1,5 +1,7 @@
 package com.karthihegde.readlist.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.text.Html
 import androidx.compose.foundation.Image
@@ -10,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ReadMore
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,10 +39,11 @@ fun BookDetailView(navHostController: NavController) {
     var isLoading by remember {
         mutableStateOf(true)
     }
-    Scaffold {
+    val context = LocalContext.current
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .padding(it)
+                .padding(paddingValues)
                 .fillMaxSize()
                 .placeholder(visible = isLoading, highlight = PlaceholderHighlight.shimmer())
         ) {
@@ -46,7 +51,7 @@ fun BookDetailView(navHostController: NavController) {
                 book.value?.let {
                     //if value is not null isloading is false
                     isLoading = false
-
+                    val urintent = Intent(Intent.ACTION_VIEW, Uri.parse(it.volumeInfo.infoLink))
                     Card(
                         modifier = Modifier.fillMaxSize(),
                         shape = RectangleShape
@@ -82,7 +87,7 @@ fun BookDetailView(navHostController: NavController) {
                                     .fillMaxWidth()
                                     .padding(50.dp),
                             ) {
-                                val imagelink = book.value!!.volumeInfo.imageLinks
+                                val imagelink = it.volumeInfo.imageLinks
                                 if (imagelink == null) {
                                     val placeholder =
                                         if (isSystemInDarkTheme()) R.drawable.ic_book_placeholder_dark else R.drawable.ic_book_placeholder
@@ -113,14 +118,14 @@ fun BookDetailView(navHostController: NavController) {
                                 }
                                 Column(modifier = Modifier.padding(top = 5.dp)) {
                                     Text(
-                                        text = book.value!!.volumeInfo.title,
+                                        text = it.volumeInfo.title,
                                         color = MaterialTheme.colors.onBackground,
                                         style = MaterialTheme.typography.h5,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                                 val authors =
-                                    if (book.value!!.volumeInfo.authors != null) book.value!!.volumeInfo.authors!!.joinToString(
+                                    if (it.volumeInfo.authors != null) it.volumeInfo.authors.joinToString(
                                         ","
                                     ) else "Unknown"
 
@@ -141,7 +146,7 @@ fun BookDetailView(navHostController: NavController) {
                                             modifier = Modifier.padding(2.dp),
                                         )
                                         Text(
-                                            text = book.value!!.volumeInfo.averageRating.toString(),
+                                            text = it.volumeInfo.averageRating.toString(),
                                             style = MaterialTheme.typography.h5,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -154,7 +159,7 @@ fun BookDetailView(navHostController: NavController) {
                                             modifier = Modifier.padding(2.dp)
                                         )
                                         Text(
-                                            text = book.value!!.volumeInfo.pageCount.toString(),
+                                            text = it.volumeInfo.pageCount.toString(),
                                             style = MaterialTheme.typography.h5,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -167,7 +172,7 @@ fun BookDetailView(navHostController: NavController) {
                                             modifier = Modifier.padding(2.dp)
                                         )
                                         Text(
-                                            text = book.value!!.volumeInfo.language,
+                                            text = it.volumeInfo.language,
                                             style = MaterialTheme.typography.h5,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -179,18 +184,34 @@ fun BookDetailView(navHostController: NavController) {
                                             style = MaterialTheme.typography.overline,
                                             modifier = Modifier.padding(2.dp),
                                         )
-                                        val price = if (book.value!!.saleInfo.retailPrice != null) {
+                                        val price = if (it.saleInfo.retailPrice != null) {
                                             val symbol =
-                                                getCurrencySymbol(book.value!!.saleInfo.retailPrice!!.currencyCode)
+                                                getCurrencySymbol(it.saleInfo.retailPrice.currencyCode)
                                                     ?: ""
                                             symbol.plus(
-                                                book.value!!.saleInfo.retailPrice!!.amount
+                                                it.saleInfo.retailPrice.amount
                                             )
                                         } else "Unknown"
                                         Text(
                                             text = price,
                                             style = MaterialTheme.typography.h5,
                                             fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.padding(10.dp))
+                                IconButton(onClick = {
+                                    context.startActivity(urintent)
+                                }) {
+                                    Row {
+                                        Icon(
+                                            Icons.Default.ReadMore,
+                                            contentDescription = "Read More"
+                                        )
+                                        Spacer(modifier = Modifier.padding(5.dp))
+                                        Text(
+                                            text = "Read Book",
+                                            style = MaterialTheme.typography.button
                                         )
                                     }
                                 }
@@ -201,7 +222,7 @@ fun BookDetailView(navHostController: NavController) {
                                 fontWeight = FontWeight.Black,
                                 modifier = Modifier.padding(start = 5.dp),
                             )
-                            val html = book.value!!.volumeInfo.description ?: "Not Provided"
+                            val html = it.volumeInfo.description ?: "Not Provided"
                             val description = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT)
                             } else {
