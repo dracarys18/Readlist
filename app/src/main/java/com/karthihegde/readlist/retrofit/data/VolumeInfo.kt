@@ -9,7 +9,7 @@ data class VolumeInfo(
     val authors: List<String>?,
     val averageRating: Float,
     val canonicalVolumeLink: String,
-    val categories: List<String>,
+    val categories: List<String>?,
     val contentVersion: String,
     val description: String?,
     val imageLinks: ImageLinks?,
