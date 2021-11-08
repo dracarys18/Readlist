@@ -1,4 +1,4 @@
-package com.karthihegde.readlist.retrofit.navigation.screens
+package com.karthihegde.readlist.navigation.screens
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book

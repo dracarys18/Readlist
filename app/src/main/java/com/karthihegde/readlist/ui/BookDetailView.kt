@@ -2,8 +2,6 @@ package com.karthihegde.readlist.ui
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,22 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
-import com.karthihegde.readlist.R
-import com.karthihegde.readlist.book
 import com.karthihegde.readlist.retrofit.data.Item
-import com.karthihegde.readlist.retrofit.getCurrencySymbol
+import com.karthihegde.readlist.utils.clickBook
+import com.karthihegde.readlist.utils.getCurrencySymbol
 
 @Composable
 fun BookDetailView(navHostController: NavController) {
@@ -47,7 +41,7 @@ fun BookDetailView(navHostController: NavController) {
                 .placeholder(visible = isLoading, highlight = PlaceholderHighlight.shimmer())
         ) {
             item {
-                book.value?.let {
+                clickBook.value?.let {
                     //if value is not null isLoading is false
                     isLoading = false
                     val uriIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.volumeInfo.infoLink))
@@ -134,34 +128,20 @@ fun BookDetailView(navHostController: NavController) {
 @Composable
 fun TitleAndAuthor(it: Item) {
     val imageLink = it.volumeInfo.imageLinks
-    if (imageLink == null) {
-        val placeholder =
-            if (isSystemInDarkTheme()) R.drawable.ic_book_placeholder_dark else R.drawable.ic_book_placeholder
-        Image(
-            painter = painterResource(id = placeholder),
-            contentDescription = "",
-            modifier = Modifier.size(200.dp)
+    val actualImageModifier = Modifier
+        .width(150.dp)
+        .height(250.dp)
+        .shadow(
+            elevation = 16.dp,
+            clip = true,
+            shape = RoundedCornerShape(16.dp)
         )
-    } else {
-        Image(
-            painter = rememberImagePainter(
-                imageLink.thumbnail.replace(
-                    "http://",
-                    "https://"
-                )
-            ),
-            contentDescription = "",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .width(150.dp)
-                .height(250.dp)
-                .shadow(
-                    elevation = 16.dp,
-                    clip = true,
-                    shape = RoundedCornerShape(16.dp)
-                )
-        )
-    }
+    val placeholderModifier = Modifier.size(200.dp)
+    BookImage(
+        imageLink = imageLink,
+        ActualImageModifier = actualImageModifier,
+        PlaceHolderModifier = placeholderModifier
+    )
     Column(modifier = Modifier.padding(top = 5.dp)) {
         Text(
             text = it.volumeInfo.title,

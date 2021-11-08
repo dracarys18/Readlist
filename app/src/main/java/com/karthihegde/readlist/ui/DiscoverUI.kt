@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -29,13 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.R
-import com.karthihegde.readlist.booklist
+import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.retrofit.data.BookList
+import com.karthihegde.readlist.retrofit.data.ImageLinks
 import com.karthihegde.readlist.retrofit.data.Item
-import com.karthihegde.readlist.retrofit.getBookFromSearch
-import com.karthihegde.readlist.retrofit.getCurrencySymbol
-import com.karthihegde.readlist.retrofit.navigation.screens.BookNavScreens
-import com.karthihegde.readlist.retrofit.navigation.screens.Screens
+import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
+import com.karthihegde.readlist.utils.booklist
+import com.karthihegde.readlist.utils.getBookFromSearch
+import com.karthihegde.readlist.utils.getCurrencySymbol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -121,27 +123,11 @@ fun SearchResults(navHostController: NavController, item: Item) {
             .wrapContentWidth(Alignment.Start)
     ) {
         val imagelink = item.volumeInfo.imageLinks
-        if (imagelink == null) {
-            val placeholder =
-                if (isSystemInDarkTheme()) R.drawable.ic_book_placeholder_dark else R.drawable.ic_book_placeholder
-            Image(
-                painter = painterResource(id = placeholder),
-                contentDescription = "",
-                modifier = Modifier.size(100.dp)
-            )
-        } else {
-            Image(
-                painter = rememberImagePainter(
-                    item.volumeInfo.imageLinks.thumbnail.replace(
-                        "http://",
-                        "https://"
-                    )
-                ),
-                contentDescription = "",
-                modifier = Modifier.size(100.dp)
-            )
-        }
-
+        BookImage(
+            imageLink = imagelink,
+            ActualImageModifier = Modifier.size(100.dp),
+            PlaceHolderModifier = Modifier.size(100.dp)
+        )
         Column {
             Text(
                 text = item.volumeInfo.title,
@@ -176,13 +162,39 @@ fun SearchResults(navHostController: NavController, item: Item) {
 }
 
 @Composable
+fun BookImage(
+    imageLink: ImageLinks?,
+    ActualImageModifier: Modifier,
+    PlaceHolderModifier: Modifier
+) {
+    if (imageLink == null) {
+        Image(
+            painter = rememberImagePainter(PLACEHOLDER_IMAGE),
+            contentDescription = "",
+            modifier = PlaceHolderModifier,
+        )
+    } else {
+        Image(
+            painter = rememberImagePainter(
+                imageLink.thumbnail.replace(
+                    "http://",
+                    "https://"
+                )
+            ),
+            contentDescription = "",
+            modifier = ActualImageModifier,
+            contentScale = ContentScale.Fit
+        )
+    }
+}
+
+@Composable
 fun DiscoverScreen(navHostController: NavController) {
-    val screens = listOf(Screens.Progress, Screens.Discover, Screens.Collection)
     Surface(color = MaterialTheme.colors.background) {
         val text = remember { mutableStateOf(TextFieldValue("")) }
         Scaffold(topBar = {
             SearchView(text = text)
-        }, bottomBar = { BottomBar(navHostController, screens) }) {
+        }, bottomBar = { BottomBar(navHostController) }) {
             Column(modifier = Modifier.padding(it)) {
                 DisplayResults(navHostController, resultList = booklist)
             }

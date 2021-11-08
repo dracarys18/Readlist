@@ -1,9 +1,10 @@
-package com.karthihegde.readlist.retrofit
+package com.karthihegde.readlist.utils
 
-import BASE_URL
 import android.util.Log
-import com.karthihegde.readlist.book
-import com.karthihegde.readlist.booklist
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import com.karthihegde.readlist.retrofit.RetrofitService
+import com.karthihegde.readlist.retrofit.data.Item
 import java.util.*
 
 suspend fun getBookFromSearch(query: String) {
@@ -15,12 +16,13 @@ suspend fun getBookFromSearch(query: String) {
     }
 }
 
-suspend fun getBookFromId(id: String) {
+suspend fun getBookFromId(id: String): Item? {
     val retroservice = RetrofitService.createRetroInterface(RetrofitService.getRetrofit(BASE_URL))
-    try {
-        book.value = retroservice.getBookFromId(id)
+    return try {
+        retroservice.getBookFromId(id)
     } catch (e: Exception) {
         Log.d("bookfromid", "Cant get the book")
+        null
     }
 }
 

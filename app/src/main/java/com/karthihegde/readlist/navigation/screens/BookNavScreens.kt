@@ -1,4 +1,4 @@
-package com.karthihegde.readlist.retrofit.navigation.screens
+package com.karthihegde.readlist.navigation.screens
 
 sealed class BookNavScreens(val route: String) {
     object DetailView : BookNavScreens("detail_view")

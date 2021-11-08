@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.karthihegde.readlist.retrofit.navigation.Navigation
+import com.karthihegde.readlist.navigation.Navigation
 import com.karthihegde.readlist.ui.theme.ReadlistTheme
 
 class MainActivity : ComponentActivity() {
