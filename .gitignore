@@ -16,4 +16,3 @@ local.properties
 .*
 !.gitignore
 !.gitattributes
-app/google-services.json
