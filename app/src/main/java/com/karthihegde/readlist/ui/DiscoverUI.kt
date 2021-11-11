@@ -23,13 +23,11 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.karthihegde.readlist.R
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.retrofit.data.BookList
 import com.karthihegde.readlist.retrofit.data.ImageLinks
@@ -45,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchView(text: MutableState<TextFieldValue>) {
-    val focusmanager = LocalFocusManager.current
+    val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()
     var leadingIcon by remember {
         mutableStateOf(Icons.Filled.Search)
@@ -56,7 +54,7 @@ fun SearchView(text: MutableState<TextFieldValue>) {
         modifier = Modifier.padding(5.dp),
         contentColor = Color.White
     ) {
-        val bordercolor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
+        val borderColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
         TextField(
             value = text.value,
             onValueChange = { value ->
@@ -73,13 +71,13 @@ fun SearchView(text: MutableState<TextFieldValue>) {
                 }
                 .fillMaxWidth(1f)
                 .padding(top = 5.dp, start = 3.dp, end = 3.dp)
-                .border(1.dp, color = bordercolor, shape = RoundedCornerShape(12.dp)),
+                .border(1.dp, color = borderColor, shape = RoundedCornerShape(12.dp)),
             leadingIcon = {
                 IconButton(onClick = {
                     if (leadingIcon == Icons.Filled.Clear && text.value.text.isNotEmpty()) {
                         text.value = TextFieldValue("")
                     } else if (leadingIcon == Icons.Filled.Clear && text.value.text.isEmpty()) {
-                        focusmanager.clearFocus(true)
+                        focusManager.clearFocus(true)
                     }
                 }) {
                     Icon(leadingIcon, contentDescription = "")
@@ -91,7 +89,7 @@ fun SearchView(text: MutableState<TextFieldValue>) {
                 Text(text = "Search Any Book You Want")
             },
             keyboardActions = KeyboardActions(onDone = {
-                focusmanager.clearFocus(true)
+                focusManager.clearFocus(true)
                 val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {
                     getBookFromSearch(text.value.text)
@@ -122,9 +120,9 @@ fun SearchResults(navHostController: NavController, item: Item) {
             )
             .wrapContentWidth(Alignment.Start)
     ) {
-        val imagelink = item.volumeInfo.imageLinks
+        val imageLink = item.volumeInfo.imageLinks
         BookImage(
-            imageLink = imagelink,
+            imageLink = imageLink,
             ActualImageModifier = Modifier.size(100.dp),
             PlaceHolderModifier = Modifier.size(100.dp)
         )

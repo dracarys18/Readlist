@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.karthihegde.readlist.navigation.screens.Screens
 import com.karthihegde.readlist.utils.NAVSCREENS
 
 @Composable

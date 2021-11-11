@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,68 +21,75 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.karthihegde.readlist.database.BookData
+import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
-import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
-import com.karthihegde.readlist.utils.clickBook
 
 @Composable
-fun CollectionScreen(navController: NavController) {
-    //TODO("Replace with value from Firebase")
-    val collectionlist =
-        listOf("_J-NHwjl7N8C", "rDRcGP-fWIEC", "M_FnYanUOtgC", "fFFvswEACAAJ", "XFTfwc-QasEC")
-
-    val numitems = LocalConfiguration.current.screenWidthDp / 150
+fun CollectionScreen(viewModel: BookViewModel, navController: NavController) {
+    val collectionList by viewModel.getAllData.observeAsState()
+    val numItems = LocalConfiguration.current.screenWidthDp / 150
     Scaffold(topBar = {
         TopBar()
     }, bottomBar = {
         BottomBar(navHostController = navController)
     }) {
-        LazyColumn(modifier = Modifier.padding(it)) {
-            items(collectionlist.chunked(numitems)) { rowItems ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                ) {
-                    rowItems.forEachIndexed { index, book ->
-                        BookCard(
-                            item = clickBook.value,//fixme: Replace with 'book' later
-                            modifier = Modifier.fillMaxWidth(1f / (numitems - index)),
-                            onClick = {
-                                navController.navigate(
-                                    route = BookNavScreens.DetailView.withArgs(
-                                        book
+        if (!collectionList.isNullOrEmpty()) {
+            LazyColumn(modifier = Modifier.padding(it)) {
+                items(collectionList!!.chunked(numItems)) { rowItems ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        rowItems.forEachIndexed { index, book ->
+                            BookCard(
+                                data = book,
+                                modifier = Modifier.fillMaxWidth(1f / (numItems - index)),
+                                onClick = {
+                                    navController.navigate(
+                                        route = BookNavScreens.DetailView.withArgs(
+                                            book.id
+                                        )
                                     )
-                                )
-                            })
+                                })
+                        }
                     }
+                    Spacer(Modifier.height(14.dp))
                 }
-                Spacer(Modifier.height(14.dp))
+            }
+        } else {
+            Column {
+                Text(text = "Nothing here so far", fontSize = 20.sp)
             }
         }
     }
 }
 
 @Composable
-fun BookCard(item: Item?, modifier: Modifier, onClick: () -> Unit) {
-    item?.let { ite ->
-        Column(modifier = modifier.clickable(onClick = onClick)) {
-            Card {
-                BookImage(
-                    imageLink = ite.volumeInfo.imageLinks,
-                    ActualImageModifier = Modifier.size(200.dp),
-                    PlaceHolderModifier = Modifier.size(200.dp)
-                )
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = ite.volumeInfo.title,
-                    maxLines = 1,
-                    fontSize = 13.sp,
-                    style = MaterialTheme.typography.caption
-                )
-            }
+fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
+    Column(modifier = modifier.clickable(onClick = onClick)) {
+        Card {
+            Image(
+                painter = rememberImagePainter(
+                    data.imageUrl.replace(
+                        "http://",
+                        "https://"
+                    )
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(200.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = data.bookName,
+                maxLines = 1,
+                fontSize = 13.sp,
+                style = MaterialTheme.typography.caption
+            )
         }
     }
 }

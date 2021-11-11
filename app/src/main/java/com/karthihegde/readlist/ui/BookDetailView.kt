@@ -24,9 +24,16 @@ import androidx.navigation.NavController
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import com.karthihegde.readlist.database.BookData
+import com.karthihegde.readlist.database.BookDatabase
 import com.karthihegde.readlist.retrofit.data.Item
+import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getCurrencySymbol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @Composable
 fun BookDetailView(navHostController: NavController) {
@@ -41,15 +48,15 @@ fun BookDetailView(navHostController: NavController) {
                 .placeholder(visible = isLoading, highlight = PlaceholderHighlight.shimmer())
         ) {
             item {
-                clickBook.value?.let {
+                clickBook.value?.let { item ->
                     //if value is not null isLoading is false
                     isLoading = false
-                    val uriIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.volumeInfo.infoLink))
+                    val uriIntent = Intent(Intent.ACTION_VIEW, Uri.parse(item.volumeInfo.infoLink))
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         shape = RectangleShape,
                     ) {
-                        BackAndCollButton(navHostController)
+                        BackAndCollButton(item, navHostController)
                         Column {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,29 +64,29 @@ fun BookDetailView(navHostController: NavController) {
                                     .fillMaxWidth()
                                     .padding(50.dp),
                             ) {
-                                TitleAndAuthor(it)
+                                TitleAndAuthor(item)
                                 Row(
                                     horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier.padding(top = 30.dp, start = 8.dp)
                                 ) {
                                     InfoTable(
                                         title = "Rating",
-                                        value = it.volumeInfo.averageRating.toString()
+                                        value = item.volumeInfo.averageRating.toString()
                                     )
                                     Spacer(modifier = Modifier.padding(10.dp))
                                     InfoTable(
                                         title = "Pages",
-                                        value = it.volumeInfo.pageCount.toString()
+                                        value = item.volumeInfo.pageCount.toString()
                                     )
                                     Spacer(modifier = Modifier.padding(10.dp))
-                                    InfoTable(title = "Language", value = it.volumeInfo.language)
+                                    InfoTable(title = "Language", value = item.volumeInfo.language)
                                     Spacer(modifier = Modifier.padding(10.dp))
-                                    val price = if (it.saleInfo.retailPrice != null) {
+                                    val price = if (item.saleInfo.retailPrice != null) {
                                         val symbol =
-                                            getCurrencySymbol(it.saleInfo.retailPrice.currencyCode)
+                                            getCurrencySymbol(item.saleInfo.retailPrice.currencyCode)
                                                 ?: ""
                                         symbol.plus(
-                                            it.saleInfo.retailPrice.amount
+                                            item.saleInfo.retailPrice.amount
                                         )
                                     } else "Unknown"
                                     InfoTable(title = "Price", value = price)
@@ -101,21 +108,21 @@ fun BookDetailView(navHostController: NavController) {
                                     }
                                 }
                             }
-                            val html = it.volumeInfo.description ?: "Not Provided"
+                            val html = item.volumeInfo.description ?: "Not Provided"
                             val description =
                                 HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
                             InfoContent(title = "Description", content = description.toString())
                             Spacer(modifier = Modifier.padding(10.dp))
                             val categories =
-                                it.volumeInfo.categories?.joinToString("")
+                                item.volumeInfo.categories?.joinToString("")
                                     ?: "Not Specified"
                             InfoContent(title = "Categories", content = categories)
                             Spacer(modifier = Modifier.padding(10.dp))
-                            InfoContent(title = "Publisher", content = it.volumeInfo.publisher)
+                            InfoContent(title = "Publisher", content = item.volumeInfo.publisher)
                             Spacer(modifier = Modifier.padding(10.dp))
                             InfoContent(
                                 title = "Date Of Publishing",
-                                content = it.volumeInfo.publishedDate
+                                content = item.volumeInfo.publishedDate
                             )
                         }
                     }
@@ -164,7 +171,11 @@ fun TitleAndAuthor(it: Item) {
 }
 
 @Composable
-fun BackAndCollButton(navHostController: NavController) {
+fun BackAndCollButton(item: Item, navHostController: NavController) {
+    val context = LocalContext.current
+    val bookmarkIcon by remember {
+        mutableStateOf(Icons.Outlined.Bookmarks)
+    }
     Box(
         modifier = Modifier
             .padding(top = 8.dp)
@@ -182,11 +193,19 @@ fun BackAndCollButton(navHostController: NavController) {
             )
         }
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                val imageLink = item.volumeInfo.imageLinks?.thumbnail ?: PLACEHOLDER_IMAGE
+                val data = BookData(item.id, item.volumeInfo.title, imageLink)
+                val dao = BookDatabase.getInstance(context).bookDatabaseDo
+                val scope = CoroutineScope(Job() + Dispatchers.IO)
+                scope.launch {
+                    dao.insert(data)
+                }
+            },
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
             Icon(
-                Icons.Outlined.Bookmarks,
+                bookmarkIcon,
                 contentDescription = "",
                 tint = MaterialTheme.colors.onBackground,
                 modifier = Modifier.shadow(elevation = 8.dp, clip = true)
