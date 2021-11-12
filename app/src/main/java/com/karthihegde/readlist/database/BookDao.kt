@@ -20,4 +20,6 @@ interface BookDao {
     @Query("SELECT * FROM BOOK_DATA WHERE ID = :id")
     fun getBookFromId(id: String): LiveData<BookData>
 
+    @Query("SELECT EXISTS (SELECT 1 FROM book_data WHERE id = :id)")
+    fun checkIfBookExists(id: String): LiveData<Boolean>
 }

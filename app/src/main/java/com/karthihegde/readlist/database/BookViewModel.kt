@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 
 class BookViewModel(application: Application) : AndroidViewModel(application) {
     val getAllData: LiveData<List<BookData>>
-    private val dao: BookDao = BookDatabase.getInstance(application).bookDatabaseDo
+    val dao: BookDao = BookDatabase.getInstance(application).bookDatabaseDo
 
     init {
         getAllData = dao.getAllBooks()

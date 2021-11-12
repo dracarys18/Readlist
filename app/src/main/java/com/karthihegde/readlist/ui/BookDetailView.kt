@@ -1,5 +1,6 @@
 package com.karthihegde.readlist.ui
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -8,9 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material.icons.filled.ReadMore
-import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,6 +29,7 @@ import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookDatabase
+import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.clickBook
@@ -173,9 +177,10 @@ fun TitleAndAuthor(it: Item) {
 @Composable
 fun BackAndCollButton(item: Item, navHostController: NavController) {
     val context = LocalContext.current
-    val bookmarkIcon by remember {
-        mutableStateOf(Icons.Outlined.Bookmarks)
-    }
+    val viewModel = BookViewModel(context.applicationContext as Application)
+    val ifExists by viewModel.dao.checkIfBookExists(item.id).observeAsState()
+    val bookmarkIcon =
+        if (ifExists == true) Icons.Filled.BookmarkAdded else Icons.Filled.Bookmark
     Box(
         modifier = Modifier
             .padding(top = 8.dp)
@@ -199,7 +204,10 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
                 val dao = BookDatabase.getInstance(context).bookDatabaseDo
                 val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {
-                    dao.insert(data)
+                    if (ifExists == true)
+                        dao.delete(data.id)
+                    else
+                        dao.insert(data)
                 }
             },
             modifier = Modifier.align(Alignment.TopEnd)

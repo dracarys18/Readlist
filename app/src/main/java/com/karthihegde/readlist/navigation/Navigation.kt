@@ -43,8 +43,7 @@ fun Navigation() {
             }
         }
         composable(route = Screens.Collection.route) {
-            val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
-            CollectionScreen(viewModel, navHostController)
+            CollectionScreen(navHostController)
         }
         composable(route = Screens.Progress.route) {
             ProgressView(navController = navHostController)
