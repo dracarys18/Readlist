@@ -6,14 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -26,7 +24,6 @@ import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
-import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 
 @Composable
 fun CollectionScreen(navController: NavController) {
@@ -63,8 +60,16 @@ fun CollectionScreen(navController: NavController) {
                 }
             }
         } else {
-            Column {
-                Text(text = "Nothing here so far", fontSize = 20.sp)
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Nothing here so far",
+                    fontSize = 25.sp,
+                    style = MaterialTheme.typography.overline
+                )
             }
         }
     }
@@ -89,7 +94,7 @@ fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = data.bookName,
-                maxLines = 1,
+                maxLines = 2,
                 fontSize = 13.sp,
                 style = MaterialTheme.typography.caption
             )
@@ -102,7 +107,7 @@ fun TopBar() {
     Surface(modifier = Modifier.fillMaxWidth()) {
         Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(15.dp)) {
             Text(
-                text = "Browse",
+                text = "Collection",
                 style = MaterialTheme.typography.h3,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold
@@ -112,14 +117,7 @@ fun TopBar() {
             horizontalAlignment = Alignment.End,
             modifier = Modifier.padding(top = 20.dp, bottom = 15.dp, end = 10.dp)
         ) {
-            Image(
-                painter = rememberImagePainter(PLACEHOLDER_IMAGE),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(45.dp)
-                    .clip(CircleShape)
-            )
+            //TODO: Something Cool Here
         }
     }
 }

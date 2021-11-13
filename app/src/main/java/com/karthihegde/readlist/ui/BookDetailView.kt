@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkAdded
-import androidx.compose.material.icons.filled.ReadMore
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -195,6 +192,27 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
                 contentDescription = "",
                 tint = MaterialTheme.colors.onBackground,
                 modifier = Modifier.shadow(elevation = 8.dp, clip = true)
+            )
+        }
+        IconButton(
+            onClick = {
+                val text =
+                    "Hey I have been reading this book called \"${item.volumeInfo.title}\". I think It's awesome you should definitely check it out\n ${item.volumeInfo.infoLink}"
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 50.dp)
+        ) {
+            Icon(
+                Icons.Filled.Share,
+                contentDescription = "Share Button"
             )
         }
         IconButton(
