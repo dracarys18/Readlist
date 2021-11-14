@@ -8,7 +8,10 @@ import retrofit2.http.Query
 
 interface IRetrofit {
     @GET("volumes")
-    suspend fun getBooks(@Query("q") query: String): BookList
+    suspend fun getBooks(
+        @Query("q") query: String,
+        @Query("maxResults") maxResults: Int = 40
+    ): BookList
 
     @GET("volumes/{id}")
     suspend fun getBookFromId(@Path("id") id: String): Item
