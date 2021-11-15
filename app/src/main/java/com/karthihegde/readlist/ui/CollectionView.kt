@@ -78,7 +78,7 @@ fun CollectionScreen(navController: NavController) {
 @Composable
 fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
     Column(modifier = modifier.clickable(onClick = onClick)) {
-        Card {
+        Box {
             Image(
                 painter = rememberImagePainter(
                     data.imageUrl.replace(
@@ -91,11 +91,16 @@ fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
                 contentScale = ContentScale.Fit
             )
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp)
+        ) {
             Text(
                 text = data.bookName,
                 maxLines = 2,
                 fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.caption
             )
         }
