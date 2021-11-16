@@ -8,7 +8,10 @@ import androidx.room.PrimaryKey
 data class BookData(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "book_name") val bookName: String,
+    @ColumnInfo(name = "author") val author: String,
     @ColumnInfo(name = "image_url") val imageUrl: String,
-    @ColumnInfo(name = "pages_read") val pagesRead: Int = 0
+    @ColumnInfo(name = "total_pages") val totalPages: Int,
+    @ColumnInfo(name = "pages_read") val pagesRead: Int = 0,
+    @ColumnInfo(name = "insert_date") val insertDate: String,
 )
 

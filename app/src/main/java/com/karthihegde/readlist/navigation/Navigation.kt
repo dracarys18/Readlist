@@ -1,20 +1,14 @@
 package com.karthihegde.readlist.navigation
 
-import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.Screens
-import com.karthihegde.readlist.ui.BookDetailView
-import com.karthihegde.readlist.ui.CollectionScreen
-import com.karthihegde.readlist.ui.DiscoverScreen
-import com.karthihegde.readlist.ui.ProgressView
+import com.karthihegde.readlist.ui.*
 import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getBookFromId
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +34,16 @@ fun Navigation() {
                     clickBook.value = getBookFromId(it)
                 }
                 BookDetailView(navHostController = navHostController)
+            }
+        }
+        composable(
+            route = BookNavScreens.EditView.route + "/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { ids ->
+            ids.arguments?.getString("id")?.let { id ->
+                EditBookProgress(navController = navHostController, id = id)
             }
         }
         composable(route = Screens.Collection.route) {

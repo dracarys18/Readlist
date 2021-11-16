@@ -35,6 +35,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun BookDetailView(navHostController: NavController) {
@@ -218,7 +220,19 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
         IconButton(
             onClick = {
                 val imageLink = item.volumeInfo.imageLinks?.thumbnail ?: PLACEHOLDER_IMAGE
-                val data = BookData(item.id, item.volumeInfo.title, imageLink)
+                val author = item.volumeInfo.authors?.joinToString(",") ?: "Unknown"
+                val calender = Calendar.getInstance()
+                val dateFormat = SimpleDateFormat("MMMM dd,yyyy", Locale.getDefault())
+                val date = dateFormat.format(calender.time)
+                val data =
+                    BookData(
+                        id = item.id,
+                        bookName = item.volumeInfo.title,
+                        imageUrl = imageLink,
+                        author = author,
+                        totalPages = item.volumeInfo.pageCount,
+                        insertDate = date,
+                    )
                 val dao = BookDatabase.getInstance(context).bookDatabaseDo
                 val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {

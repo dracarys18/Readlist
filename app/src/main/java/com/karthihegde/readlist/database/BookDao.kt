@@ -23,6 +23,9 @@ interface BookDao {
     @Query("SELECT EXISTS (SELECT 1 FROM book_data WHERE id = :id)")
     fun checkIfBookExists(id: String): LiveData<Boolean>
 
-    @Query("UPDATE book_data SET pages_read=:pages")
-    fun updatePages(pages: String)
+    @Query("SELECT pages_read FROM book_data WHERE id = :id")
+    fun getPagesRead(id: String): LiveData<Int>
+
+    @Query("UPDATE book_data SET pages_read=:pages where id = :id")
+    fun updatePages(pages: Int, id: String)
 }
