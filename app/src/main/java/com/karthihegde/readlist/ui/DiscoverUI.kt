@@ -1,5 +1,6 @@
 package com.karthihegde.readlist.ui
 
+import androidx.annotation.Keep
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -215,24 +216,25 @@ fun DiscoverScreen(navHostController: NavController) {
 
 @Composable
 fun DisplayResults(navHostController: NavController) {
-    val bookResults = SearchResults.bookList.value
-    if (bookResults != null) {
+    SearchResults.bookList.value?.let { bookResults ->
         LazyColumn(verticalArrangement = Arrangement.spacedBy(5.dp)) {
             items(bookResults.items) { item ->
                 SearchResults(navHostController = navHostController, item = item)
             }
         }
-    } else if (SearchResults.isError.value) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "No Result Found for that Book",
-                fontSize = 25.sp,
-                style = MaterialTheme.typography.overline
-            )
+    } ?: run {
+        if (SearchResults.isError.value) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "No Result Found for that Book",
+                    fontSize = 25.sp,
+                    style = MaterialTheme.typography.overline
+                )
+            }
         }
     }
 }
