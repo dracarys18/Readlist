@@ -14,7 +14,7 @@ suspend fun getBookFromSearch(query: String): SearchResults {
             isError.value = false
         }
     } catch (e: Exception) {
-        Log.d("bookfromsearch", "Some problem with retrofit")
+        Log.d("bookfromsearch", e.message, e.cause)
         SearchResults.apply {
             bookList.value = null
             isError.value = true

@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ListPriceX(
-    val amountInMicros: Int,
+    val amountInMicros: Long,
     val currencyCode: String
 ) : Parcelable
