@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +33,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProgressView(navController: NavController) {
-    Scaffold(topBar = {
+    val scaffoldState = rememberScaffoldState()
+    Scaffold(scaffoldState = scaffoldState, topBar = {
         TopProgressBar()
     }, bottomBar = {
         BottomBar(navHostController = navController)
@@ -45,7 +47,11 @@ fun ProgressView(navController: NavController) {
                 modifier = Modifier.padding(paddingValues)
             ) {
                 items(books!!) {
-                    BookProgress(navController = navController, data = it)
+                    BookProgress(
+                        navController = navController,
+                        data = it,
+                        scaffoldState = scaffoldState
+                    )
                 }
             }
         } else {
@@ -79,8 +85,10 @@ fun TopProgressBar() {
 }
 
 @Composable
-fun BookProgress(navController: NavController, data: BookData) {
+fun BookProgress(navController: NavController, data: BookData, scaffoldState: ScaffoldState) {
     val context = LocalContext.current
+    val dao = BookDatabase.getInstance(context)
+    val scope = CoroutineScope(Job() + Dispatchers.IO)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,14 +155,35 @@ fun BookProgress(navController: NavController, data: BookData) {
                     Text(text = "Edit")
                 }
                 Spacer(modifier = Modifier.weight(1f, true))
-                IconButton(onClick = {
-                    val dao = BookDatabase.getInstance(context)
-                    val scope = CoroutineScope(Job() + Dispatchers.IO)
+                IconButton(modifier = Modifier.padding(end = 10.dp), onClick = {
                     scope.launch {
-                        dao.bookDatabaseDo.updatePages(pages = data.totalPages, id = data.id)
+                        dao.bookDatabaseDo.delete(data.id)
+                        val snackResult = scaffoldState.snackbarHostState.showSnackbar(
+                            "Deleted the Book",
+                            "Undo"
+                        )
+                        if (snackResult == SnackbarResult.ActionPerformed) {
+                            dao.bookDatabaseDo.insert(data)
+                        }
                     }
                 }) {
-                    Icon(Icons.Default.DoneAll, contentDescription = "")
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = null,
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.padding(end = 5.dp),
+                    onClick = {
+                        scope.launch {
+                            dao.bookDatabaseDo.updatePages(pages = data.totalPages, id = data.id)
+                        }
+                    }) {
+                    Icon(
+                        Icons.Default.DoneAll,
+                        contentDescription = "",
+                        tint = MaterialTheme.colors.onBackground
+                    )
                 }
             }
         }

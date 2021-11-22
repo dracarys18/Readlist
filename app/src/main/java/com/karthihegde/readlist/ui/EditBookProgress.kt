@@ -122,6 +122,7 @@ fun EditBookProgress(navController: NavController, id: String) {
                     )
                 }
             }
+            val backroundColor = if (isSystemInDarkTheme()) Color(0xff1565c0) else Color(0xff5e92f3)
             Row {
                 Spacer(modifier = Modifier.fillMaxWidth(0.8f))
                 OutlinedButton(
@@ -129,7 +130,7 @@ fun EditBookProgress(navController: NavController, id: String) {
                         onDoneAction()
                     },
                     shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = backroundColor)
                 ) {
                     Icon(Icons.Default.Check, contentDescription = "")
                 }
