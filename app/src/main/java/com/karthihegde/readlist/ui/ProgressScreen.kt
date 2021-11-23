@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,12 +47,31 @@ fun ProgressView(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.padding(paddingValues)
             ) {
-                items(books!!) {
-                    BookProgress(
-                        navController = navController,
-                        data = it,
-                        scaffoldState = scaffoldState
-                    )
+                val group = books!!.groupBy { bookData ->
+                    val status =
+                        when (bookData.pagesRead) {
+                            0 -> "To Read"
+                            bookData.totalPages -> "Finished"
+                            else -> "In Progress"
+                        }
+                    status
+                }
+                group.forEach { (initial, bookList) ->
+                    item {
+                        Text(
+                            text = initial,
+                            modifier = Modifier.padding(top = 10.dp, start = 8.dp, bottom = 5.dp),
+                            color = Color(0xff1e88e5),
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+                    items(bookList) {
+                        BookProgress(
+                            navController = navController,
+                            data = it,
+                            scaffoldState = scaffoldState
+                        )
+                    }
                 }
             }
         } else {
