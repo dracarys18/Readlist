@@ -2,6 +2,7 @@ package com.karthihegde.readlist.ui
 
 import android.app.Application
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -80,7 +83,12 @@ fun CollectionScreen(navController: NavController) {
 
 @Composable
 fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
-    Column(modifier = modifier.clickable(onClick = onClick)) {
+    Column(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .width(125.dp)
+            .height(195.dp)
+    ) {
         Box {
             Image(
                 painter = rememberImagePainter(
@@ -90,22 +98,37 @@ fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
                     )
                 ),
                 contentDescription = "",
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp)
-        ) {
-            Text(
-                text = data.bookName,
-                maxLines = 2,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.caption
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                MaterialTheme.colors.background
+                            ),
+                            startY = 25f
+                        )
+                    )
             )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Text(
+                    text = data.bookName,
+                    maxLines = 2,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

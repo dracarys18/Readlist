@@ -14,7 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -123,7 +124,7 @@ fun SearchView() {
 
 @Composable
 fun SearchResults(navHostController: NavController, item: Item) {
-    Row(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
@@ -135,43 +136,51 @@ fun SearchResults(navHostController: NavController, item: Item) {
                 end = 16.dp,
                 bottom = 8.dp
             )
-            .wrapContentWidth(Alignment.Start)
     ) {
-        val imageLink = item.volumeInfo.imageLinks
-        BookImage(
-            imageLink = imageLink,
-            ActualImageModifier = Modifier.size(100.dp),
-            PlaceHolderModifier = Modifier.size(100.dp)
-        )
-        Column {
-            Text(
-                text = item.volumeInfo.title,
-                color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.h6
+        Row(horizontalArrangement = Arrangement.End) {
+            Icon(
+                Icons.Default.StarRate,
+                contentDescription = null,
+                modifier = Modifier.size(15.dp),
+                tint = Color.Red
             )
-
-            val authors = if (item.volumeInfo.authors != null)
-                "by ${item.volumeInfo.authors.joinToString(",")}"
-            else
-                "by Unknown"
             Text(
-                text = authors,
-                color = MaterialTheme.colors.onBackground,
+                text = item.volumeInfo.averageRating.toString(),
                 style = MaterialTheme.typography.caption
             )
-            Row {
-                Icon(Icons.Filled.Star, contentDescription = "", modifier = Modifier.size(15.dp))
+        }
+        Row {
+            val imageLink = item.volumeInfo.imageLinks
+            BookImage(
+                imageLink = imageLink,
+                ActualImageModifier = Modifier.size(100.dp),
+                PlaceHolderModifier = Modifier.size(100.dp)
+            )
+            Column(modifier = Modifier.fillMaxWidth(0.7f)) {
                 Text(
-                    text = item.volumeInfo.averageRating.toString(),
-                    style = MaterialTheme.typography.caption
+                    text = item.volumeInfo.title,
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
+
+                val authors = if (item.volumeInfo.authors != null)
+                    item.volumeInfo.authors.joinToString(",")
+                else
+                    "Unknown Author"
+                Text(
+                    text = authors,
+                    color = Color(0xff1e88e5),
+                    style = MaterialTheme.typography.caption,
+                    fontWeight = FontWeight.SemiBold
+                )
+                val code =
+                    if (item.saleInfo.retailPrice == null) "" else getCurrencySymbol(item.saleInfo.retailPrice.currencyCode)
+                        ?: ""
+                val price =
+                    if (item.saleInfo.retailPrice == null) "Unknown" else item.saleInfo.retailPrice.amount
+                Text(text = code + price, style = MaterialTheme.typography.caption)
             }
-            val code =
-                if (item.saleInfo.retailPrice == null) "" else getCurrencySymbol(item.saleInfo.retailPrice.currencyCode)
-                    ?: ""
-            val price =
-                if (item.saleInfo.retailPrice == null) "Unknown" else item.saleInfo.retailPrice.amount
-            Text(text = code + price, style = MaterialTheme.typography.caption)
         }
     }
 }
