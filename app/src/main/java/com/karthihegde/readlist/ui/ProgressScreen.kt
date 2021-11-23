@@ -176,7 +176,15 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                     modifier = Modifier.padding(end = 5.dp),
                     onClick = {
                         scope.launch {
+                            val oldPageValue = data.pagesRead
                             dao.bookDatabaseDo.updatePages(pages = data.totalPages, id = data.id)
+                            val snackResult = scaffoldState.snackbarHostState.showSnackbar(
+                                "Finished Reading this Book",
+                                "Undo"
+                            )
+                            if (snackResult == SnackbarResult.ActionPerformed) {
+                                dao.bookDatabaseDo.updatePages(id = data.id, pages = oldPageValue)
+                            }
                         }
                     }) {
                     Icon(
