@@ -222,7 +222,7 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
                 val imageLink = item.volumeInfo.imageLinks?.thumbnail ?: PLACEHOLDER_IMAGE
                 val author = item.volumeInfo.authors?.joinToString(",") ?: "Unknown"
                 val calender = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("MMMM dd,yyyy", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("MMM dd,yyyy", Locale.getDefault())
                 val date = dateFormat.format(calender.time)
                 val data =
                     BookData(

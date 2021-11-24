@@ -166,7 +166,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                         )
                         LinearProgressIndicator(
                             progress,
-                            color = MaterialTheme.colors.primaryVariant,
+                            color = Color(0xff1e88e5),
                             modifier = Modifier
                                 .height(2.dp)
                                 .fillMaxWidth(1f),
