@@ -7,8 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DoneAll
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -139,7 +140,8 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                         text = data.bookName,
                         color = MaterialTheme.colors.onBackground,
                         style = MaterialTheme.typography.h6,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                     Text(
                         text = data.author,
@@ -151,17 +153,26 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                         color = MaterialTheme.colors.onBackground,
                         style = MaterialTheme.typography.overline
                     )
-                    val progress = (data.pagesRead.toFloat() / data.totalPages.toFloat())
-                    Text(
-                        text = "${(progress * 100).toInt()}%",
-                        color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.overline
-                    )
-                    LinearProgressIndicator(
-                        progress,
-                        color = MaterialTheme.colors.primaryVariant,
-                        backgroundColor = MaterialTheme.colors.onBackground
-                    )
+                    if (data.pagesRead != 0) {
+                        val progress = (data.pagesRead.toFloat() / data.totalPages.toFloat())
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 7.dp),
+                            text = "${(progress * 100).toInt()}%",
+                            color = MaterialTheme.colors.onBackground,
+                            style = MaterialTheme.typography.caption,
+                            textAlign = TextAlign.Right
+                        )
+                        LinearProgressIndicator(
+                            progress,
+                            color = MaterialTheme.colors.primaryVariant,
+                            modifier = Modifier
+                                .height(2.dp)
+                                .fillMaxWidth(1f),
+                            backgroundColor = Color.White
+                        )
+                    }
                 }
             }
 
@@ -169,10 +180,10 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = {
+                IconButton(onClick = {
                     navController.navigate(BookNavScreens.EditView.withArgs(data.id))
                 }) {
-                    Text(text = "Edit")
+                    Icon(Icons.Rounded.Edit, contentDescription = null)
                 }
                 Spacer(modifier = Modifier.weight(1f, true))
                 IconButton(modifier = Modifier.padding(end = 10.dp), onClick = {
@@ -188,7 +199,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                     }
                 }) {
                     Icon(
-                        Icons.Default.Delete,
+                        Icons.Rounded.Delete,
                         contentDescription = null,
                     )
                 }
@@ -208,7 +219,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                         }
                     }) {
                     Icon(
-                        Icons.Default.DoneAll,
+                        Icons.Rounded.DoneAll,
                         contentDescription = "",
                         tint = MaterialTheme.colors.onBackground
                     )
@@ -217,3 +228,4 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
         }
     }
 }
+
