@@ -4,6 +4,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.karthihegde.readlist.utils.NAVSCREENS
@@ -25,7 +26,9 @@ fun BottomBar(navHostController: NavController) {
                         onClick = {
                             navHostController.navigate(screen.route)
                         },
-                        alwaysShowLabel = false
+                        selectedContentColor = Color(0xff1976d2),
+                        unselectedContentColor = MaterialTheme.colors.onBackground,
+                        alwaysShowLabel = true
                     )
                 }
             }
