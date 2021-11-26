@@ -7,6 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -227,8 +228,9 @@ fun DiscoverScreen(navHostController: NavController) {
 
 @Composable
 fun DisplayResults(navHostController: NavController) {
+    val state = rememberLazyListState()
     SearchResults.bookList.value?.let { bookResults ->
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(5.dp)) {
             items(bookResults.items) { item ->
                 SearchResults(navHostController = navHostController, item = item)
             }
