@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -137,7 +138,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
             style = MaterialTheme.typography.overline,
             color = MaterialTheme.colors.onBackground,
             maxLines = 2,
-            modifier = Modifier.padding(end = 5.dp),
+            modifier = Modifier.padding(end = 8.dp),
             textAlign = TextAlign.Right
         )
         Column(
@@ -218,14 +219,25 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                         contentDescription = null,
                     )
                 }
+                val completed = data.pagesRead == data.totalPages
                 IconButton(
                     modifier = Modifier.padding(end = 5.dp),
                     onClick = {
                         scope.launch {
                             val oldPageValue = data.pagesRead
-                            dao.bookDatabaseDo.updatePages(pages = data.totalPages, id = data.id)
+                            val snackbarString: String
+                            if (completed) {
+                                snackbarString = "Reset the book status"
+                                dao.bookDatabaseDo.updatePages(pages = 0, id = data.id)
+                            } else {
+                                snackbarString = "Finished Reading this Book"
+                                dao.bookDatabaseDo.updatePages(
+                                    pages = data.totalPages,
+                                    id = data.id
+                                )
+                            }
                             val snackResult = scaffoldState.snackbarHostState.showSnackbar(
-                                "Finished Reading this Book",
+                                snackbarString,
                                 "Undo"
                             )
                             if (snackResult == SnackbarResult.ActionPerformed) {
@@ -233,8 +245,10 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                             }
                         }
                     }) {
+                    val icon =
+                        if (completed) Icons.Rounded.Undo else Icons.Rounded.DoneAll
                     Icon(
-                        Icons.Rounded.DoneAll,
+                        icon,
                         contentDescription = "",
                         tint = MaterialTheme.colors.onBackground
                     )
