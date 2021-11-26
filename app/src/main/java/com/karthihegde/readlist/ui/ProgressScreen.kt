@@ -2,6 +2,7 @@ package com.karthihegde.readlist.ui
 
 import android.app.Application
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -73,6 +74,9 @@ fun ProgressView(navController: NavController) {
                             scaffoldState = scaffoldState
                         )
                     }
+                    item {
+                        ReadListDivider()
+                    }
                 }
             }
         } else {
@@ -89,6 +93,17 @@ fun ProgressView(navController: NavController) {
             }
         }
     }
+}
+
+@Composable
+fun ReadListDivider() {
+    val dividerColor =
+        if (isSystemInDarkTheme()) Color(0x1fffffff) else Color(0xFF35303C)
+    Divider(
+        thickness = 1.dp,
+        startIndent = 0.dp,
+        color = dividerColor.copy(alpha = 0.12f)
+    )
 }
 
 @Composable
