@@ -46,6 +46,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function to Display Searched items
+ */
 @Composable
 fun SearchView() {
     val focusManager = LocalFocusManager.current
@@ -123,6 +126,12 @@ fun SearchView() {
     }
 }
 
+/**
+ * Composable function to display individual Book in a list
+ *
+ * @param navHostController NavHost Controller
+ * @param item Item class which contains book info
+ */
 @Composable
 fun SearchResults(navHostController: NavController, item: Item) {
     Surface(
@@ -186,6 +195,13 @@ fun SearchResults(navHostController: NavController, item: Item) {
     }
 }
 
+/**
+ * Composable fucntion to Display Book Thumbnail
+ *
+ * @param imageLink Thumbnail Link
+ * @param ActualImageModifier Modifier for the image if the link is not null
+ * @param PlaceHolderModifier Modifier for the image if the link is null
+ */
 @Composable
 fun BookImage(
     imageLink: ImageLinks?,
@@ -194,7 +210,9 @@ fun BookImage(
 ) {
     if (imageLink == null) {
         Image(
-            painter = rememberImagePainter(PLACEHOLDER_IMAGE),
+            painter = rememberImagePainter(PLACEHOLDER_IMAGE, builder = {
+                crossfade(true)
+            }),
             contentDescription = "",
             modifier = PlaceHolderModifier,
         )
@@ -204,7 +222,10 @@ fun BookImage(
                 imageLink.thumbnail.replace(
                     "http://",
                     "https://"
-                )
+                ),
+                builder = {
+                    crossfade(true)
+                }
             ),
             contentDescription = "",
             modifier = ActualImageModifier,
@@ -213,6 +234,11 @@ fun BookImage(
     }
 }
 
+/**
+ * The main screen of Searchview
+ *
+ * @param navHostController NavHost Controller
+ */
 @Composable
 fun DiscoverScreen(navHostController: NavController) {
     Surface(color = MaterialTheme.colors.background) {
@@ -226,6 +252,11 @@ fun DiscoverScreen(navHostController: NavController) {
     }
 }
 
+/**
+ * List View of Search Results if the bookList is null it shows error or else it shows the results
+ *
+ * @param navHostController NavHost Controller
+ */
 @Composable
 fun DisplayResults(navHostController: NavController) {
     val state = rememberLazyListState()
@@ -252,6 +283,9 @@ fun DisplayResults(navHostController: NavController) {
     }
 }
 
+/**
+ * Stores the SearchResults in a [MutableState]
+ */
 object SearchResults {
     var text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
     var bookList: MutableState<BookList?> = mutableStateOf(null)

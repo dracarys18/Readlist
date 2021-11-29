@@ -7,8 +7,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.karthihegde.readlist.utils.NAVSCREENS
+import com.karthihegde.readlist.utils.navScreens
 
+/**
+ * Composable Function which generates Navigation Bar
+ *
+ * @param navHostController Navigation Host Controller
+ */
 @Composable
 fun BottomBar(navHostController: NavController) {
     CompositionLocalProvider(LocalElevationOverlay provides null) {
@@ -18,7 +23,7 @@ fun BottomBar(navHostController: NavController) {
             BottomNavigation(
                 backgroundColor = MaterialTheme.colors.background,
             ) {
-                NAVSCREENS.forEach { screen ->
+                navScreens.forEach { screen ->
                     BottomNavigationItem(
                         icon = { Icon(screen.icon, contentDescription = "") },
                         selected = currentRoute == screen.route,

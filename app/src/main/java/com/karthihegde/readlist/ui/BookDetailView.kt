@@ -38,6 +38,11 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Composable Function to Render Detailed View for a Book which was clicked
+ *
+ * @param navHostController Navigation Host Controller
+ */
 @Composable
 fun BookDetailView(navHostController: NavController) {
     var isLoading by remember {
@@ -135,6 +140,11 @@ fun BookDetailView(navHostController: NavController) {
     }
 }
 
+/**
+ * Composable function to Display Title and Author as well as book thumbnail in the display screen
+ *
+ * @param it of Type Item
+ */
 @Composable
 fun TitleAndAuthor(it: Item) {
     val imageLink = it.volumeInfo.imageLinks
@@ -173,6 +183,12 @@ fun TitleAndAuthor(it: Item) {
     )
 }
 
+/**
+ * Composable Function to Display the Back And Add to Collection and Share Button
+ *
+ * @param item of Type Item which contains all book info
+ * @param navHostController NavHost Controller
+ */
 @Composable
 fun BackAndCollButton(item: Item, navHostController: NavController) {
     val context = LocalContext.current
@@ -254,6 +270,12 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
     }
 }
 
+/**
+ * Composable function which acts like a Table to Display book info
+ *
+ * @param title Title of the table Column
+ * @param value Value to Display in the Table
+ */
 @Composable
 fun InfoTable(title: String, value: String) {
     Column {
@@ -270,6 +292,12 @@ fun InfoTable(title: String, value: String) {
     }
 }
 
+/**
+ * Composable function to Display a para with heading and content
+ *
+ * @param title Heading of the Para
+ * @param content Content inside the para
+ */
 @Composable
 fun InfoContent(title: String, content: String) {
     Column {

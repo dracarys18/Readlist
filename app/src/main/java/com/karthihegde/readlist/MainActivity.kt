@@ -11,6 +11,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.karthihegde.readlist.navigation.Navigation
 import com.karthihegde.readlist.ui.theme.ReadlistTheme
 
+/**
+ * Main Activity Class
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +35,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+/**
+ * Composable Preview Function
+ */
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {

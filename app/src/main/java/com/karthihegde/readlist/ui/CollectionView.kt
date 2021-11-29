@@ -31,6 +31,11 @@ import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 
+/**
+ * Composable function for displaying collection screen
+ *
+ * @param navController NavHost Controller
+ */
 @Composable
 fun CollectionScreen(navController: NavController) {
     val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
@@ -81,6 +86,13 @@ fun CollectionScreen(navController: NavController) {
     }
 }
 
+/**
+ * Composable function for making the vertical grid view
+ *
+ * @param data BookData from the Database
+ * @param modifier Compose modifier to fit book as a grid
+ * @param onClick onClick listener for the BookCard
+ */
 @Composable
 fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
     Column(
@@ -133,6 +145,9 @@ fun BookCard(data: BookData, modifier: Modifier, onClick: () -> Unit) {
     }
 }
 
+/**
+ * Composable function for TopAppBar collection screen
+ */
 @Composable
 fun TopBar() {
     Surface(modifier = Modifier.fillMaxWidth()) {

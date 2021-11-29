@@ -4,6 +4,17 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Data Class for Table
+ *
+ * @param id Book ID
+ * @param bookName Book Name
+ * @param author Book Author
+ * @param imageUrl Book Thumbnail URL
+ * @param totalPages Total Pages of the Book
+ * @param pagesRead Total Pages Read in the Book
+ * @param insertDate Book Insertion Date
+ */
 @Entity(tableName = "book_data")
 data class BookData(
     @PrimaryKey val id: String,

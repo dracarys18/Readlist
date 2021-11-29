@@ -3,6 +3,16 @@ package com.karthihegde.readlist.retrofit.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * @param accessInfo
+ * @param etag
+ * @param id
+ * @param kind
+ * @param saleInfo
+ * @param searchInfo
+ * @param selfLink
+ * @param volumeInfo
+ */
 @Parcelize
 data class Item(
     val accessInfo: AccessInfo,

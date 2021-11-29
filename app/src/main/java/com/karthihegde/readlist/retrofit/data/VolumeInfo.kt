@@ -3,6 +3,30 @@ package com.karthihegde.readlist.retrofit.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * @param allowAnonLogging
+ * @param authors
+ * @param averageRating
+ * @param canonicalVolumeLink
+ * @param categories
+ * @param contentVersion
+ * @param description
+ * @param imageLinks
+ * @param industryIdentifiers
+ * @param infoLink
+ * @param language
+ * @param maturityRating
+ * @param pageCount
+ * @param panelizationSummary
+ * @param previewLink
+ * @param printType
+ * @param publishedDate
+ * @param publisher
+ * @param ratingsCount
+ * @param readingModes
+ * @param subtitle
+ * @param title
+ */
 @Parcelize
 data class VolumeInfo(
     val allowAnonLogging: Boolean,

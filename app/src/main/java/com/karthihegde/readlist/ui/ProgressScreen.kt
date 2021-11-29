@@ -35,6 +35,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+/**
+ * The Main Screen of Book Progress View
+ *
+ * @param navController NavHost Controller
+ */
 @Composable
 fun ProgressView(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
@@ -96,6 +101,9 @@ fun ProgressView(navController: NavController) {
     }
 }
 
+/**
+ * Divider between 3 groups of collection
+ */
 @Composable
 fun ReadListDivider() {
     val dividerColor =
@@ -107,6 +115,9 @@ fun ReadListDivider() {
     )
 }
 
+/**
+ * TopApp Bar for Progress Screen
+ */
 @Composable
 fun TopProgressBar() {
     Surface(modifier = Modifier.fillMaxWidth()) {
@@ -121,6 +132,9 @@ fun TopProgressBar() {
     }
 }
 
+/**
+ * Individual Composable for a book in Collection
+ */
 @Composable
 fun BookProgress(navController: NavController, data: BookData, scaffoldState: ScaffoldState) {
     val context = LocalContext.current

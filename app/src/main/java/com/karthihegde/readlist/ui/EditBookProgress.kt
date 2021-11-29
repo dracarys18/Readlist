@@ -29,6 +29,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+/**
+ * Page to edit the pages of a book
+ *
+ * @param id Unique ID of the Book
+ * @param navController NavHost Controller
+ */
 @Composable
 fun EditBookProgress(navController: NavController, id: String) {
     val context = LocalContext.current
@@ -44,7 +50,7 @@ fun EditBookProgress(navController: NavController, id: String) {
     }
     val borderColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
     val totalPages = bookData?.totalPages ?: Int.MAX_VALUE
-    fun onDoneAction() {
+    val onDoneAction: () -> Unit = {
         if (!isError && text.isNotEmpty()) {
             val scope = CoroutineScope(Job() + Dispatchers.IO)
             scope.launch {
@@ -58,25 +64,7 @@ fun EditBookProgress(navController: NavController, id: String) {
                 Toast.LENGTH_SHORT
             ).show()
     }
-    Scaffold(topBar = {
-        Box(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.TopStart)
-            ) {
-                Icon(
-                    Icons.Filled.ArrowBackIosNew,
-                    contentDescription = "",
-                    tint = MaterialTheme.colors.onBackground,
-                    modifier = Modifier.shadow(elevation = 8.dp, clip = true)
-                )
-            }
-        }
-    }) {
+    Scaffold(topBar = { EditScreenTopAppBar(navController = navController) }) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier.padding(8.dp)
@@ -135,6 +123,30 @@ fun EditBookProgress(navController: NavController, id: String) {
                     Icon(Icons.Default.Check, contentDescription = "")
                 }
             }
+        }
+    }
+}
+
+/**
+ *
+ */
+@Composable
+fun EditScreenTopAppBar(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+    ) {
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.align(Alignment.TopStart)
+        ) {
+            Icon(
+                Icons.Filled.ArrowBackIosNew,
+                contentDescription = "",
+                tint = MaterialTheme.colors.onBackground,
+                modifier = Modifier.shadow(elevation = 8.dp, clip = true)
+            )
         }
     }
 }

@@ -6,6 +6,12 @@ import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.ui.SearchResults
 import java.util.*
 
+/**
+ * Get Booklist from Searched Query
+ *
+ * @param query Book Search Query
+ * @return Returns updated SearchResults object
+ */
 suspend fun getBookFromSearch(query: String): SearchResults {
     val retroService = RetrofitService.createRetroInterface(RetrofitService.getRetrofit(BASE_URL))
     return try {
@@ -22,6 +28,12 @@ suspend fun getBookFromSearch(query: String): SearchResults {
     }
 }
 
+/**
+ * Get [Item] object of the Book from the Book ID
+ *
+ * @param id ID of the Book
+ * @return Returns [Item] object which can be null as well
+ */
 suspend fun getBookFromId(id: String): Item? {
     val retroService = RetrofitService.createRetroInterface(RetrofitService.getRetrofit(BASE_URL))
     return try {
@@ -32,6 +44,10 @@ suspend fun getBookFromId(id: String): Item? {
     }
 }
 
+/**
+ * @param code Currency Code
+ * @return Currency Symbol
+ */
 fun getCurrencySymbol(code: String?): String? {
     val cur = Currency.getInstance(code)
     return cur.symbol
