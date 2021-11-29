@@ -1,0 +1,2 @@
+# Readlist
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a1cea168204417b9c0b71f57728f139)](https://app.codacy.com/gh/dracarys18/Readlist?utm_source=github.com&utm_medium=referral&utm_content=dracarys18/Readlist&utm_campaign=Badge_Grade_Settings)
