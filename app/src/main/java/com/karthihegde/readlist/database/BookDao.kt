@@ -67,5 +67,5 @@ interface BookDao {
      * @param id Book Id
      */
     @Query("UPDATE book_data SET pages_read=:pages where id = :id")
-    fun updatePages(pages: Int, id: String)
+    suspend fun updatePages(pages: Int, id: String)
 }
