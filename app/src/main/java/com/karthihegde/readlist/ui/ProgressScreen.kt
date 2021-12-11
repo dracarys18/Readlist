@@ -159,7 +159,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Row {
+            Row(modifier = Modifier.padding(top = 5.dp)) {
                 BookImage(
                     imageLink = ImageLinks("", data.imageUrl),
                     ActualImageModifier = Modifier.size(100.dp),
