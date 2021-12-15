@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
+import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.navigation.screens.Screens
 import com.karthihegde.readlist.ui.*
+import com.karthihegde.readlist.ui.stats.StatScreen
 import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getBookFromId
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +56,9 @@ fun Navigation() {
         }
         composable(route = Screens.Progress.route) {
             ProgressView(navController = navHostController)
+        }
+        composable(route = GeneralScreens.StatScreen.route) {
+            StatScreen(navController = navHostController)
         }
     }
 

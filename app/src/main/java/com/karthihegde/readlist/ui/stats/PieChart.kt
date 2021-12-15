@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
@@ -23,6 +22,16 @@ import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+
+/**
+ * PieChart Composable
+ *
+ * @param modifier Modifier of the pie chart
+ * @param stats Map of Point Title and Points
+ * @param colors List of Colors of pie chart
+ * @param isDonut Is donut pie chart of not
+ * @param percentColor Color of the Percentage text
+ */
 @Composable
 fun CustomPieChart(
     modifier: Modifier,
@@ -133,6 +142,17 @@ fun CustomPieChart(
 
 }
 
+/**
+ * An Extension to Draw PieChart
+ *
+ * @param color Color of the pie piece
+ * @param startAngle angle where pie should start
+ * @param arcProgress Increase in angle
+ * @param size Size of the Pie
+ * @param padding Padding
+ * @param isActive Is the pie piece is clicked or not
+ * @param isDonut Is piechart a donut or not
+ */
 private fun DrawScope.drawPie(
     color: Color,
     startAngle: Float,
@@ -159,6 +179,14 @@ private fun DrawScope.drawPie(
     }
 }
 
+/**
+ * Convert touch event points to angle
+ *
+ * @param width Width of the pie
+ * @param height height of the pie
+ * @param xPos Xpos of the touch
+ * @param yPos ypos of the touch
+ */
 private fun convertTouchEventPointToAngle(
     width: Float,
     height: Float,

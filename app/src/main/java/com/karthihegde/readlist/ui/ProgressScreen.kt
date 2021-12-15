@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.Edit
@@ -29,6 +30,7 @@ import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookDatabase
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
+import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.retrofit.data.ImageLinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +46,7 @@ import kotlinx.coroutines.launch
 fun ProgressView(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState, topBar = {
-        TopProgressBar()
+        TopProgressBar(navController)
     }, bottomBar = {
         BottomBar(navHostController = navController)
     }) { paddingValues ->
@@ -67,7 +69,7 @@ fun ProgressView(navController: NavController) {
                 group.forEach { (initial, bookList) ->
                     item {
                         Text(
-                            text = initial,
+                            text = initial.plus("(${bookList.size})"),
                             modifier = Modifier.padding(top = 10.dp, start = 8.dp, bottom = 5.dp),
                             color = Color(0xff1e88e5),
                             fontWeight = FontWeight.Black
@@ -119,15 +121,31 @@ fun ReadListDivider() {
  * TopApp Bar for Progress Screen
  */
 @Composable
-fun TopProgressBar() {
+fun TopProgressBar(navController: NavController) {
     Surface(modifier = Modifier.fillMaxWidth()) {
-        Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(15.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(15.dp)
+                .wrapContentHeight()
+        ) {
             Text(
                 text = "Progress",
+                modifier = Modifier.align(Alignment.TopStart),
                 style = MaterialTheme.typography.h3,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold
             )
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(48.dp),
+                onClick = { navController.navigate(GeneralScreens.StatScreen.route) }) {
+                Icon(
+                    Icons.Outlined.Analytics,
+                    modifier = Modifier.wrapContentSize(),
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
