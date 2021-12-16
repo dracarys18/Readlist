@@ -3,7 +3,7 @@ buildscript {
     ext {
         compose_version = '1.0.5'
         retrofit_version = '2.9.0'
-        roomVersion = '2.3.0'
+        roomVersion = '2.4.0'
         accompanistVersion = '0.20.2'
     }
     repositories {
