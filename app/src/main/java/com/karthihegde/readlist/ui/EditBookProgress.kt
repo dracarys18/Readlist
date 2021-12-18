@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -40,7 +39,7 @@ fun EditBookProgress(navController: NavController, id: String) {
     val context = LocalContext.current
     var newPage = 0
     val viewModel = BookViewModel(context.applicationContext as Application)
-    val bookData by viewModel.dao.getBookFromId(id).observeAsState()
+    val bookData by viewModel.dao.getBookFromId(id).collectAsState(initial = null)
     val pagesRead = bookData?.pagesRead?.toString() ?: ""
     var isError by remember {
         mutableStateOf(false)

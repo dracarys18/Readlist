@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -193,9 +192,9 @@ fun TitleAndAuthor(it: Item) {
 fun BackAndCollButton(item: Item, navHostController: NavController) {
     val context = LocalContext.current
     val viewModel = BookViewModel(context.applicationContext as Application)
-    val ifExists by viewModel.dao.checkIfBookExists(item.id).observeAsState()
+    val ifExists by viewModel.dao.checkIfBookExists(item.id).collectAsState(initial = false)
     val bookmarkIcon =
-        if (ifExists == true) Icons.Filled.BookmarkAdded else Icons.Filled.Bookmark
+        if (ifExists) Icons.Filled.BookmarkAdded else Icons.Filled.Bookmark
     Box(
         modifier = Modifier
             .padding(top = 8.dp)
@@ -252,7 +251,7 @@ fun BackAndCollButton(item: Item, navHostController: NavController) {
                 val dao = BookDatabase.getInstance(context).bookDatabaseDo
                 val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {
-                    if (ifExists == true)
+                    if (ifExists)
                         dao.delete(data.id)
                     else
                         dao.insert(data)

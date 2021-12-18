@@ -7,8 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +29,7 @@ import com.karthihegde.readlist.database.BookViewModel
 fun StatScreen(navController: NavController) {
     Scaffold(topBar = { TopAppBar(navController = navController) }) {
         val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
-        val books by viewModel.getAllData.observeAsState()
+        val books by viewModel.getAllData.collectAsState(initial = null)
         if (!books.isNullOrEmpty()) {
             val group = books!!.groupBy { bookData ->
                 val status =

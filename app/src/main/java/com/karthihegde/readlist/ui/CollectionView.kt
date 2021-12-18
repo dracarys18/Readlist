@@ -12,8 +12,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -39,7 +39,7 @@ import com.karthihegde.readlist.navigation.screens.BookNavScreens
 @Composable
 fun CollectionScreen(navController: NavController) {
     val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
-    val collectionList by viewModel.getAllData.observeAsState()
+    val collectionList by viewModel.getAllData.collectAsState(initial = null)
     val numItems = LocalConfiguration.current.screenWidthDp / 150
     Scaffold(topBar = {
         TopBar()

@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Book DAO for Room Database
@@ -31,7 +32,7 @@ interface BookDao {
      * Get all books as LiveData from Database
      */
     @Query("SELECT * FROM BOOK_DATA")
-    fun getAllBooks(): LiveData<List<BookData>>
+    fun getAllBooks(): Flow<List<BookData>>
 
     /**
      * Get Book From ID
@@ -40,7 +41,7 @@ interface BookDao {
      * @return BookData object as LiveData from Database
      */
     @Query("SELECT * FROM BOOK_DATA WHERE ID = :id")
-    fun getBookFromId(id: String): LiveData<BookData>
+    fun getBookFromId(id: String): Flow<BookData>
 
     /**
      * Check if Book exist or Not
@@ -49,7 +50,7 @@ interface BookDao {
      * @return book exist or not as LiveData
      */
     @Query("SELECT EXISTS (SELECT 1 FROM book_data WHERE id = :id)")
-    fun checkIfBookExists(id: String): LiveData<Boolean>
+    fun checkIfBookExists(id: String): Flow<Boolean>
 
     /**
      * Get the number of Pages Read
@@ -58,7 +59,7 @@ interface BookDao {
      * @return Pages read
      */
     @Query("SELECT pages_read FROM book_data WHERE id = :id")
-    fun getPagesRead(id: String): LiveData<Int>
+    fun getPagesRead(id: String): Flow<Int>
 
     /**
      * Update the pages read

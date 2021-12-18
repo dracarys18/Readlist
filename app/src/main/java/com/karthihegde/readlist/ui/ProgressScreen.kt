@@ -14,8 +14,8 @@ import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +51,7 @@ fun ProgressView(navController: NavController) {
         BottomBar(navHostController = navController)
     }) { paddingValues ->
         val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
-        val books by viewModel.getAllData.observeAsState()
+        val books by viewModel.getAllData.collectAsState(initial = null)
         if (!books.isNullOrEmpty()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
