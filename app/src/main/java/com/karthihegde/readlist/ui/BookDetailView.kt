@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui
 
-import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -43,7 +42,7 @@ import java.util.*
  * @param navHostController Navigation Host Controller
  */
 @Composable
-fun BookDetailView(navHostController: NavController) {
+fun BookDetailView(viewModel: BookViewModel, navHostController: NavController) {
     var isLoading by remember {
         mutableStateOf(true)
     }
@@ -63,7 +62,11 @@ fun BookDetailView(navHostController: NavController) {
                         modifier = Modifier.fillMaxSize(),
                         shape = RectangleShape,
                     ) {
-                        BackAndCollButton(item, navHostController)
+                        BackAndCollButton(
+                            viewModel = viewModel,
+                            item = item,
+                            navHostController = navHostController
+                        )
                         Column {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -189,9 +192,8 @@ fun TitleAndAuthor(it: Item) {
  * @param navHostController NavHost Controller
  */
 @Composable
-fun BackAndCollButton(item: Item, navHostController: NavController) {
+fun BackAndCollButton(viewModel: BookViewModel, item: Item, navHostController: NavController) {
     val context = LocalContext.current
-    val viewModel = BookViewModel(context.applicationContext as Application)
     val ifExists by viewModel.dao.checkIfBookExists(item.id).collectAsState(initial = false)
     val bookmarkIcon =
         if (ifExists) Icons.Filled.BookmarkAdded else Icons.Filled.Bookmark

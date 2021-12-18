@@ -43,14 +43,13 @@ import kotlinx.coroutines.launch
  * @param navController NavHost Controller
  */
 @Composable
-fun ProgressView(navController: NavController) {
+fun ProgressView(viewModel: BookViewModel, navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState, topBar = {
         TopProgressBar(navController)
     }, bottomBar = {
         BottomBar(navHostController = navController)
     }) { paddingValues ->
-        val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
         val books by viewModel.getAllData.collectAsState(initial = null)
         if (!books.isNullOrEmpty()) {
             LazyColumn(

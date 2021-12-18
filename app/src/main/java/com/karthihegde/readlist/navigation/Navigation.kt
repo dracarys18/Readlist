@@ -1,11 +1,15 @@
 package com.karthihegde.readlist.navigation
 
+import android.app.Application
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.navigation.screens.Screens
@@ -24,6 +28,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun Navigation() {
     val navHostController = rememberNavController()
+    val application = LocalContext.current.applicationContext as Application
+    val viewModel = remember {
+        BookViewModel(application = application)
+    }
     NavHost(navController = navHostController, startDestination = Screens.Discover.route) {
         composable(route = Screens.Discover.route) {
             DiscoverScreen(navHostController)
@@ -38,7 +46,7 @@ fun Navigation() {
                 scope.launch {
                     clickBook.value = getBookFromId(it)
                 }
-                BookDetailView(navHostController = navHostController)
+                BookDetailView(viewModel = viewModel, navHostController = navHostController)
             }
         }
         composable(
@@ -48,17 +56,17 @@ fun Navigation() {
             })
         ) { ids ->
             ids.arguments?.getString("id")?.let { id ->
-                EditBookProgress(navController = navHostController, id = id)
+                EditBookProgress(viewModel = viewModel, navController = navHostController, id = id)
             }
         }
         composable(route = Screens.Collection.route) {
-            CollectionScreen(navHostController)
+            CollectionScreen(viewModel = viewModel, navController = navHostController)
         }
         composable(route = Screens.Progress.route) {
-            ProgressView(navController = navHostController)
+            ProgressView(viewModel = viewModel, navController = navHostController)
         }
         composable(route = GeneralScreens.StatScreen.route) {
-            StatScreen(navController = navHostController)
+            StatScreen(viewModel = viewModel, navController = navHostController)
         }
     }
 

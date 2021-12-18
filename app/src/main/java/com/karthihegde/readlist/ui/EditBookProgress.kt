@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui
 
-import android.app.Application
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,10 +34,9 @@ import kotlin.math.abs
  * @param navController NavHost Controller
  */
 @Composable
-fun EditBookProgress(navController: NavController, id: String) {
+fun EditBookProgress(viewModel: BookViewModel, navController: NavController, id: String) {
     val context = LocalContext.current
     var newPage = 0
-    val viewModel = BookViewModel(context.applicationContext as Application)
     val bookData by viewModel.dao.getBookFromId(id).collectAsState(initial = null)
     val pagesRead = bookData?.pagesRead?.toString() ?: ""
     var isError by remember {

@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui.stats
 
-import android.app.Application
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,9 +24,8 @@ import com.karthihegde.readlist.database.BookViewModel
  * @param navController
  */
 @Composable
-fun StatScreen(navController: NavController) {
+fun StatScreen(viewModel: BookViewModel, navController: NavController) {
     Scaffold(topBar = { TopAppBar(navController = navController) }) {
-        val viewModel = BookViewModel(LocalContext.current.applicationContext as Application)
         val books by viewModel.getAllData.collectAsState(initial = null)
         if (!books.isNullOrEmpty()) {
             val group = books!!.groupBy { bookData ->
