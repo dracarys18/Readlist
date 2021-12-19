@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -26,6 +27,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -49,9 +51,11 @@ import kotlinx.coroutines.launch
 /**
  * Composable function to Display Searched items
  */
+@ExperimentalComposeUiApi
 @Composable
 fun SearchView() {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = FocusRequester()
     var leadingIcon by remember {
         mutableStateOf(Icons.Filled.Search)
@@ -83,10 +87,13 @@ fun SearchView() {
                 .border(1.dp, color = borderColor, shape = RoundedCornerShape(12.dp)),
             leadingIcon = {
                 IconButton(onClick = {
-                    if (leadingIcon == Icons.Filled.Clear && text.text.isNotEmpty()) {
+                    if (leadingIcon == Icons.Filled.Clear && text.text.isNotEmpty())
                         SearchResults.text.value = TextFieldValue("")
-                    } else if (leadingIcon == Icons.Filled.Clear && text.text.isEmpty()) {
+                    else if (leadingIcon == Icons.Filled.Clear && text.text.isEmpty())
                         focusManager.clearFocus(true)
+                    else if (leadingIcon == Icons.Filled.Search && text.text.isEmpty()) {
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
                     }
                 }) {
                     Icon(leadingIcon, contentDescription = "")
@@ -239,6 +246,7 @@ fun BookImage(
  *
  * @param navHostController NavHost Controller
  */
+@ExperimentalComposeUiApi
 @Composable
 fun DiscoverScreen(navHostController: NavController) {
     Surface(color = MaterialTheme.colors.background) {

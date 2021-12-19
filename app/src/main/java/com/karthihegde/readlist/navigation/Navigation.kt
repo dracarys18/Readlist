@@ -3,6 +3,7 @@ package com.karthihegde.readlist.navigation
 import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 /**
  * Main Navigation Composable
  */
+@ExperimentalComposeUiApi
 @Composable
 fun Navigation() {
     val navHostController = rememberNavController()
