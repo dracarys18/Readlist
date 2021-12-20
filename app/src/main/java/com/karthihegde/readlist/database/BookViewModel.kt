@@ -2,7 +2,8 @@ package com.karthihegde.readlist.database
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -16,5 +17,17 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         getAllData = dao.getAllBooks()
+    }
+}
+
+class BookViewModelFactory(
+    private val application: Application
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        if (modelClass.isAssignableFrom(BookViewModel::class.java)) {
+            return BookViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
