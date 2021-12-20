@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui
 
-import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -16,10 +15,10 @@ import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,14 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.database.BookDatabase
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.retrofit.data.ImageLinks
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -45,6 +41,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProgressView(viewModel: BookViewModel, navController: NavController) {
     val scaffoldState = rememberScaffoldState()
+    val scaffoldCoroutineScope = rememberCoroutineScope()
     Scaffold(scaffoldState = scaffoldState, topBar = {
         TopProgressBar(navController)
     }, bottomBar = {
@@ -76,9 +73,11 @@ fun ProgressView(viewModel: BookViewModel, navController: NavController) {
                     }
                     items(bookList) {
                         BookProgress(
+                            viewModel = viewModel,
                             navController = navController,
                             data = it,
-                            scaffoldState = scaffoldState
+                            scaffoldState = scaffoldState,
+                            scaffoldCoroutineScope = scaffoldCoroutineScope
                         )
                     }
                     item {
@@ -118,6 +117,8 @@ fun ReadListDivider() {
 
 /**
  * TopApp Bar for Progress Screen
+ *
+ * @param navController
  */
 @Composable
 fun TopProgressBar(navController: NavController) {
@@ -151,12 +152,21 @@ fun TopProgressBar(navController: NavController) {
 
 /**
  * Individual Composable for a book in Collection
+ *
+ * @param viewModel
+ * @param navController
+ * @param data
+ * @param scaffoldCoroutineScope Coroutine scope of Scaffold lifetime
+ * @param scaffoldState
  */
 @Composable
-fun BookProgress(navController: NavController, data: BookData, scaffoldState: ScaffoldState) {
-    val context = LocalContext.current
-    val dao = BookDatabase.getInstance(context)
-    val scope = CoroutineScope(Job() + Dispatchers.IO)
+fun BookProgress(
+    viewModel: BookViewModel,
+    navController: NavController,
+    data: BookData,
+    scaffoldState: ScaffoldState,
+    scaffoldCoroutineScope: CoroutineScope
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -234,14 +244,14 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                 }
                 Spacer(modifier = Modifier.weight(1f, true))
                 IconButton(modifier = Modifier.padding(end = 10.dp), onClick = {
-                    scope.launch {
-                        dao.bookDatabaseDo.delete(data.id)
+                    scaffoldCoroutineScope.launch {
+                        viewModel.delete(data.id)
                         val snackResult = scaffoldState.snackbarHostState.showSnackbar(
                             "Deleted the Book",
                             "Undo"
                         )
                         if (snackResult == SnackbarResult.ActionPerformed) {
-                            dao.bookDatabaseDo.insert(data)
+                            viewModel.insert(data)
                         }
                     }
                 }) {
@@ -254,15 +264,15 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                 IconButton(
                     modifier = Modifier.padding(end = 5.dp),
                     onClick = {
-                        scope.launch {
+                        scaffoldCoroutineScope.launch {
                             val oldPageValue = data.pagesRead
                             val snackbarString: String
                             if (completed) {
                                 snackbarString = "Reset the book status"
-                                dao.bookDatabaseDo.updatePages(pages = 0, id = data.id)
+                                viewModel.updatePages(pages = 0, id = data.id)
                             } else {
                                 snackbarString = "Finished Reading this Book"
-                                dao.bookDatabaseDo.updatePages(
+                                viewModel.updatePages(
                                     pages = data.totalPages,
                                     id = data.id
                                 )
@@ -272,7 +282,7 @@ fun BookProgress(navController: NavController, data: BookData, scaffoldState: Sc
                                 "Undo"
                             )
                             if (snackResult == SnackbarResult.ActionPerformed) {
-                                dao.bookDatabaseDo.updatePages(id = data.id, pages = oldPageValue)
+                                viewModel.updatePages(id = data.id, pages = oldPageValue)
                             }
                         }
                     }) {

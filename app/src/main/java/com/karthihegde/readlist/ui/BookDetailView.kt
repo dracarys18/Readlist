@@ -23,15 +23,12 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.database.BookDatabase
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getCurrencySymbol
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +36,7 @@ import java.util.*
 /**
  * Composable Function to Render Detailed View for a Book which was clicked
  *
+ * @param viewModel ViewModel
  * @param navHostController Navigation Host Controller
  */
 @Composable
@@ -188,13 +186,15 @@ fun TitleAndAuthor(it: Item) {
 /**
  * Composable Function to Display the Back And Add to Collection and Share Button
  *
+ * @param viewModel ViewModel
  * @param item of Type Item which contains all book info
  * @param navHostController NavHost Controller
  */
 @Composable
 fun BackAndCollButton(viewModel: BookViewModel, item: Item, navHostController: NavController) {
     val context = LocalContext.current
-    val ifExists by viewModel.dao.checkIfBookExists(item.id).collectAsState(initial = false)
+    val ifExists by viewModel.checkIfBookExists(item.id).collectAsState(initial = false)
+    val scope = rememberCoroutineScope { Dispatchers.IO }
     val bookmarkIcon =
         if (ifExists) Icons.Filled.BookmarkAdded else Icons.Filled.Bookmark
     Box(
@@ -250,13 +250,12 @@ fun BackAndCollButton(viewModel: BookViewModel, item: Item, navHostController: N
                         totalPages = item.volumeInfo.pageCount,
                         insertDate = date,
                     )
-                val dao = BookDatabase.getInstance(context).bookDatabaseDo
-                val scope = CoroutineScope(Job() + Dispatchers.IO)
+
                 scope.launch {
                     if (ifExists)
-                        dao.delete(data.id)
+                        viewModel.delete(data.id)
                     else
-                        dao.insert(data)
+                        viewModel.insert(data)
                 }
             },
             modifier = Modifier.align(Alignment.TopEnd)

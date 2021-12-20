@@ -33,6 +33,7 @@ import com.karthihegde.readlist.navigation.screens.BookNavScreens
  * Composable function for displaying collection screen
  *
  * @param navController NavHost Controller
+ * @param viewModel VieModel
  */
 @Composable
 fun CollectionScreen(viewModel: BookViewModel, navController: NavController) {

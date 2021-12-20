@@ -34,6 +34,7 @@ import kotlin.math.abs
 /**
  * Page to edit the pages of a book
  *
+ * @param viewModel VieModel
  * @param id Unique ID of the Book
  * @param navController NavHost Controller
  */
@@ -41,7 +42,8 @@ import kotlin.math.abs
 fun EditBookProgress(viewModel: BookViewModel, navController: NavController, id: String) {
     val context = LocalContext.current
     var newPage = 0
-    val bookData by viewModel.dao.getBookFromId(id).collectAsState(initial = null)
+    val bookData by viewModel.getBookFromId(id = id).collectAsState(initial = null)
+    val scope = rememberCoroutineScope { Dispatchers.IO }
     val pagesRead = bookData?.pagesRead?.toString() ?: ""
     var isError by remember {
         mutableStateOf(false)
@@ -53,9 +55,8 @@ fun EditBookProgress(viewModel: BookViewModel, navController: NavController, id:
     val totalPages = bookData?.totalPages ?: Int.MAX_VALUE
     val onDoneAction: () -> Unit = {
         if (!isError && text.isNotEmpty()) {
-            val scope = CoroutineScope(Job() + Dispatchers.IO)
             scope.launch {
-                viewModel.dao.updatePages(pages = newPage, id = id)
+                viewModel.updatePages(pages = newPage, id = id)
             }
             navController.popBackStack()
         } else
@@ -135,7 +136,9 @@ fun EditBookProgress(viewModel: BookViewModel, navController: NavController, id:
 }
 
 /**
+ * EditScreen Top App Bar
  *
+ * @param navController navcontroller
  */
 @Composable
 fun EditScreenTopAppBar(navController: NavController) {

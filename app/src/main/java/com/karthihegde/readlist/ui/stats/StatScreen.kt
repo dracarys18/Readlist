@@ -21,6 +21,7 @@ import com.karthihegde.readlist.database.BookViewModel
 /**
  * Main view of Stat Screen
  *
+ * @param viewModel ViewModel
  * @param navController
  */
 @Composable
