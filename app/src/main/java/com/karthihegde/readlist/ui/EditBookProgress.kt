@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -16,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,6 +91,12 @@ fun EditBookProgress(viewModel: BookViewModel, navController: NavController, id:
                         placeholder = { Text(pagesRead, textAlign = TextAlign.Center) },
                         isError = isError,
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            autoCorrect = true,
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
                         keyboardActions = KeyboardActions(onDone = { onDoneAction() }),
                         modifier = Modifier
                             .wrapContentHeight()
