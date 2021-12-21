@@ -3,6 +3,7 @@ package com.karthihegde.readlist.navigation
 import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 @ExperimentalComposeUiApi
 @Composable
 fun Navigation() {
+    val scope = rememberCoroutineScope { Dispatchers.IO }
     val navHostController = rememberNavController()
     val application = LocalContext.current.applicationContext as Application
     val viewModel: BookViewModel = viewModel(
@@ -46,7 +48,6 @@ fun Navigation() {
             }
         )) { args ->
             args.arguments?.getString("item")?.let {
-                val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {
                     clickBook.value = getBookFromId(it)
                 }

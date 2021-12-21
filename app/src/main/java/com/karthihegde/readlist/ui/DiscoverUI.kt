@@ -56,6 +56,7 @@ import kotlinx.coroutines.launch
 fun SearchView() {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope { Dispatchers.IO }
     val focusRequester = FocusRequester()
     var leadingIcon by remember {
         mutableStateOf(Icons.Filled.Search)
@@ -119,7 +120,6 @@ fun SearchView() {
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = {
                 focusManager.clearFocus(true)
-                val scope = CoroutineScope(Job() + Dispatchers.IO)
                 scope.launch {
                     getBookFromSearch(text.text)
                 }
