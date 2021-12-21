@@ -26,7 +26,6 @@ import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
-import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getCurrencySymbol
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,14 +35,20 @@ import java.util.*
 /**
  * Composable Function to Render Detailed View for a Book which was clicked
  *
+ * @param clickBookViewModel ClickBookViewModel
  * @param viewModel ViewModel
  * @param navHostController Navigation Host Controller
  */
 @Composable
-fun BookDetailView(viewModel: BookViewModel, navHostController: NavController) {
+fun BookDetailView(
+    clickBookViewModel: ClickBookViewModel,
+    viewModel: BookViewModel,
+    navHostController: NavController
+) {
     var isLoading by remember {
         mutableStateOf(true)
     }
+    val clickedBook by clickBookViewModel.clickedBook.collectAsState()
     val context = LocalContext.current
     Scaffold { paddingValues ->
         LazyColumn(
@@ -52,7 +57,7 @@ fun BookDetailView(viewModel: BookViewModel, navHostController: NavController) {
                 .placeholder(visible = isLoading, highlight = PlaceholderHighlight.shimmer())
         ) {
             item {
-                clickBook.value?.let { item ->
+                clickedBook?.let { item ->
                     //if value is not null isLoading is false
                     isLoading = false
                     val uriIntent = Intent(Intent.ACTION_VIEW, Uri.parse(item.volumeInfo.infoLink))

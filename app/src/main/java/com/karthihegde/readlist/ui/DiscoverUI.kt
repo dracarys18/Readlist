@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
@@ -43,9 +44,9 @@ import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.getBookFromSearch
 import com.karthihegde.readlist.utils.getCurrencySymbol
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -298,4 +299,21 @@ object SearchResults {
     var text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
     var bookList: MutableState<BookList?> = mutableStateOf(null)
     var isError: MutableState<Boolean> = mutableStateOf(false)
+}
+
+/**
+ * A ViewModel to store the book which is clicked
+ */
+class ClickBookViewModel : ViewModel() {
+    private val _clickBook: MutableStateFlow<Item?> = MutableStateFlow(null)
+    val clickedBook: Flow<Item?> = _clickBook
+
+    /**
+     * Handle value change of [_clickBook]
+     *
+     * @param item
+     */
+    fun onValueChange(item: Item?) {
+        _clickBook.value = item
+    }
 }

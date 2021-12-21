@@ -2,7 +2,6 @@ package com.karthihegde.readlist.navigation
 
 import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
@@ -19,11 +18,8 @@ import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.navigation.screens.Screens
 import com.karthihegde.readlist.ui.*
 import com.karthihegde.readlist.ui.stats.StatScreen
-import com.karthihegde.readlist.utils.clickBook
 import com.karthihegde.readlist.utils.getBookFromId
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -32,6 +28,7 @@ import kotlinx.coroutines.launch
 @ExperimentalComposeUiApi
 @Composable
 fun Navigation() {
+    val clickBookViewModel = ClickBookViewModel()
     val scope = rememberCoroutineScope { Dispatchers.IO }
     val navHostController = rememberNavController()
     val application = LocalContext.current.applicationContext as Application
@@ -49,9 +46,13 @@ fun Navigation() {
         )) { args ->
             args.arguments?.getString("item")?.let {
                 scope.launch {
-                    clickBook.value = getBookFromId(it)
+                    clickBookViewModel.onValueChange(getBookFromId(it))
                 }
-                BookDetailView(viewModel = viewModel, navHostController = navHostController)
+                BookDetailView(
+                    clickBookViewModel = clickBookViewModel,
+                    viewModel = viewModel,
+                    navHostController = navHostController
+                )
             }
         }
         composable(
