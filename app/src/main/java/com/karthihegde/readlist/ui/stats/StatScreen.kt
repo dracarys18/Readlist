@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.karthihegde.readlist.database.BookViewModel
+import com.karthihegde.readlist.utils.groupByStatus
 
 /**
  * Main view of Stat Screen
@@ -29,15 +30,7 @@ fun StatScreen(viewModel: BookViewModel, navController: NavController) {
     Scaffold(topBar = { TopAppBar(navController = navController) }) {
         val books by viewModel.getAllData.collectAsState(initial = null)
         if (!books.isNullOrEmpty()) {
-            val group = books!!.groupBy { bookData ->
-                val status =
-                    when (bookData.pagesRead) {
-                        0 -> "To Read"
-                        bookData.totalPages -> "Finished"
-                        else -> "In Progress"
-                    }
-                status
-            }
+            val group = books!!.groupByStatus()
             val mapStats = group.map { (key, value) -> key to value.size.toFloat() }
                 .sortedBy { (_, valu) -> valu }.toMap()
             val keys = mapStats.keys.toList()

@@ -30,6 +30,7 @@ import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.retrofit.data.ImageLinks
+import com.karthihegde.readlist.utils.groupByStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -53,15 +54,7 @@ fun ProgressView(viewModel: BookViewModel, navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.padding(paddingValues)
             ) {
-                val group = books!!.groupBy { bookData ->
-                    val status =
-                        when (bookData.pagesRead) {
-                            0 -> "To Read"
-                            bookData.totalPages -> "Finished"
-                            else -> "In Progress"
-                        }
-                    status
-                }
+                val group = books!!.groupByStatus()
                 group.forEach { (initial, bookList) ->
                     item {
                         Text(

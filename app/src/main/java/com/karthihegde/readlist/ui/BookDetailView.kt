@@ -48,7 +48,7 @@ fun BookDetailView(
     var isLoading by remember {
         mutableStateOf(true)
     }
-    val clickedBook by clickBookViewModel.clickedBook.collectAsState()
+    val clickedBook by clickBookViewModel.clickedBook.collectAsState(initial = null)
     val context = LocalContext.current
     Scaffold { paddingValues ->
         LazyColumn(
