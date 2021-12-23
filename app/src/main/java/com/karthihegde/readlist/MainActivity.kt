@@ -16,7 +16,7 @@ import com.karthihegde.readlist.ui.theme.ReadlistTheme
  * Main Activity Class
  */
 class MainActivity : ComponentActivity() {
-    @ExperimentalComposeUiApi
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
