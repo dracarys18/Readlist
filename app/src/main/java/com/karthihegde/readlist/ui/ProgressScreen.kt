@@ -12,10 +12,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Undo
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +22,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.fade
+import com.google.accompanist.placeholder.material.placeholder
 import com.karthihegde.readlist.database.BookData
 import com.karthihegde.readlist.database.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
@@ -49,47 +49,64 @@ fun ProgressView(viewModel: BookViewModel, navController: NavController) {
         BottomBar(navHostController = navController)
     }) { paddingValues ->
         val books by viewModel.getAllData.collectAsState(initial = null)
-        if (!books.isNullOrEmpty()) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                val group = books!!.groupByStatus()
-                group.forEach { (initial, bookList) ->
-                    item {
-                        Text(
-                            text = initial.plus("(${bookList.size})"),
-                            modifier = Modifier.padding(top = 10.dp, start = 8.dp, bottom = 5.dp),
-                            color = Color(0xff1e88e5),
-                            fontWeight = FontWeight.Black
+        var placeHolderState by remember {
+            mutableStateOf(false)
+        }
+        books?.let { bookData ->
+            placeHolderState = false
+            if (bookData.isNotEmpty()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .placeholder(
+                            visible = placeHolderState,
+                            highlight = PlaceholderHighlight.fade()
                         )
-                    }
-                    items(bookList) {
-                        BookProgress(
-                            viewModel = viewModel,
-                            navController = navController,
-                            data = it,
-                            scaffoldState = scaffoldState,
-                            scaffoldCoroutineScope = scaffoldCoroutineScope
-                        )
-                    }
-                    item {
-                        ReadListDivider()
+                ) {
+                    val group = bookData.groupByStatus()
+                    group.forEach { (initial, bookList) ->
+                        item {
+                            Text(
+                                text = initial.plus("(${bookList.size})"),
+                                modifier = Modifier.padding(
+                                    top = 10.dp,
+                                    start = 8.dp,
+                                    bottom = 5.dp
+                                ),
+                                color = Color(0xff1e88e5),
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                        items(bookList) {
+                            BookProgress(
+                                viewModel = viewModel,
+                                navController = navController,
+                                data = it,
+                                scaffoldState = scaffoldState,
+                                scaffoldCoroutineScope = scaffoldCoroutineScope
+                            )
+                        }
+                        item {
+                            ReadListDivider()
+                        }
                     }
                 }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Nothing here so far",
+                        fontSize = 25.sp,
+                        style = MaterialTheme.typography.overline
+                    )
+                }
             }
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Nothing here so far",
-                    fontSize = 25.sp,
-                    style = MaterialTheme.typography.overline
-                )
-            }
+        } ?: run {
+            placeHolderState = true
         }
     }
 }

@@ -35,7 +35,7 @@ fun Navigation() {
     val viewModel: BookViewModel = viewModel(
         factory = BookViewModelFactory(application = application)
     )
-    NavHost(navController = navHostController, startDestination = Screens.Discover.route) {
+    NavHost(navController = navHostController, startDestination = Screens.Progress.route) {
         composable(route = Screens.Discover.route) {
             DiscoverScreen(navHostController)
         }
