@@ -1,5 +1,6 @@
 package com.karthihegde.readlist.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,19 +35,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
-import com.karthihegde.readlist.retrofit.data.BookList
+import com.karthihegde.readlist.retrofit.RetroViewModel
 import com.karthihegde.readlist.retrofit.data.ImageLinks
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
-import com.karthihegde.readlist.utils.getBookFromSearch
 import com.karthihegde.readlist.utils.getCurrencySymbol
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -54,7 +51,7 @@ import kotlinx.coroutines.launch
  */
 @ExperimentalComposeUiApi
 @Composable
-fun SearchView() {
+fun SearchView(retroViewModel: RetroViewModel) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope { Dispatchers.IO }
@@ -62,6 +59,7 @@ fun SearchView() {
     var leadingIcon by remember {
         mutableStateOf(Icons.Filled.Search)
     }
+    val bookList by retroViewModel.bookList.collectAsState(initial = null)
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -69,11 +67,11 @@ fun SearchView() {
         contentColor = Color.White
     ) {
         val borderColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
-        val text = SearchResults.text.value
+        val text = SearchState.text.value
         TextField(
             value = text,
             onValueChange = { value ->
-                SearchResults.text.value = value
+                SearchState.text.value = value
             },
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -90,7 +88,7 @@ fun SearchView() {
             leadingIcon = {
                 IconButton(onClick = {
                     if (leadingIcon == Icons.Filled.Clear && text.text.isNotEmpty())
-                        SearchResults.text.value = TextFieldValue("")
+                        SearchState.text.value = TextFieldValue("")
                     else if (leadingIcon == Icons.Filled.Clear && text.text.isEmpty())
                         focusManager.clearFocus(true)
                     else if (leadingIcon == Icons.Filled.Search && text.text.isEmpty()) {
@@ -102,12 +100,9 @@ fun SearchView() {
                 }
             },
             trailingIcon = {
-                SearchResults.bookList.value?.let {
+                bookList?.let {
                     IconButton(onClick = {
-                        SearchResults.apply {
-                            bookList.value = null
-                            isError.value = false
-                        }
+                        retroViewModel.resetAll()
                     }) {
                         Icon(Icons.Rounded.ClearAll, contentDescription = "Clear all Button")
                     }
@@ -122,7 +117,7 @@ fun SearchView() {
             keyboardActions = KeyboardActions(onSearch = {
                 focusManager.clearFocus(true)
                 scope.launch {
-                    getBookFromSearch(text.text)
+                    retroViewModel.getBooks(text.text)
                 }
             }),
             colors = TextFieldDefaults.textFieldColors(
@@ -249,13 +244,16 @@ fun BookImage(
  */
 @ExperimentalComposeUiApi
 @Composable
-fun DiscoverScreen(navHostController: NavController) {
+fun DiscoverScreen(retroViewModel: RetroViewModel, navHostController: NavController) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(topBar = {
-            SearchView()
+            SearchView(retroViewModel = retroViewModel)
         }, bottomBar = { BottomBar(navHostController) }) {
             Column(modifier = Modifier.padding(it)) {
-                DisplayResults(navHostController)
+                DisplayResults(
+                    retroViewModel = retroViewModel,
+                    navHostController = navHostController
+                )
             }
         }
     }
@@ -267,16 +265,21 @@ fun DiscoverScreen(navHostController: NavController) {
  * @param navHostController NavHost Controller
  */
 @Composable
-fun DisplayResults(navHostController: NavController) {
+fun DisplayResults(
+    retroViewModel: RetroViewModel,
+    navHostController: NavController
+) {
     val state = rememberLazyListState()
-    SearchResults.bookList.value?.let { bookResults ->
+    val bookList by retroViewModel.bookList.collectAsState(initial = null)
+    val isError by retroViewModel.isError.collectAsState(initial = false)
+    bookList?.items?.let { bookResults ->
         LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            items(bookResults.items) { item ->
+            items(bookResults) { item ->
                 SearchResults(navHostController = navHostController, item = item)
             }
         }
     } ?: run {
-        if (SearchResults.isError.value) {
+        if (isError) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -293,27 +296,8 @@ fun DisplayResults(navHostController: NavController) {
 }
 
 /**
- * Stores the SearchResults in a [MutableState]
+ *
  */
-object SearchResults {
+object SearchState {
     var text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
-    var bookList: MutableState<BookList?> = mutableStateOf(null)
-    var isError: MutableState<Boolean> = mutableStateOf(false)
-}
-
-/**
- * A ViewModel to store the book which is clicked
- */
-class ClickBookViewModel : ViewModel() {
-    private val _clickBook: MutableStateFlow<Item?> = MutableStateFlow(null)
-    val clickedBook: Flow<Item?> = _clickBook
-
-    /**
-     * Handle value change of [_clickBook]
-     *
-     * @param item
-     */
-    fun onValueChange(item: Item?) {
-        _clickBook.value = item
-    }
 }

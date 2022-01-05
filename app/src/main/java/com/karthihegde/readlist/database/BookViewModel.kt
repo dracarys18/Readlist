@@ -1,28 +1,22 @@
 package com.karthihegde.readlist.database
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * ViewModel for the Database
- *
- * @param application Application Context
  */
-class BookViewModel(application: Application) : AndroidViewModel(application) {
-    val getAllData: Flow<List<BookData>>
+@HiltViewModel
+class BookViewModel
+@Inject constructor(
     private val repository: BookRepository
-
-    init {
-        val dao = BookDatabase.getInstance(application).bookDatabaseDo
-        repository = BookRepository(dao)
-        getAllData = repository.readBookData
-    }
+) : ViewModel() {
+    val getAllData: Flow<List<BookData>> = repository.readBookData
 
     /**
      * Insert function that's exposed to use outside
@@ -86,19 +80,3 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
     }
 }
 
-/**
- * VieModelFactory class which is used to create ViewModel with arguments
- *
- * @param application Application context
- */
-class BookViewModelFactory(
-    private val application: Application
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        if (modelClass.isAssignableFrom(BookViewModel::class.java)) {
-            return BookViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

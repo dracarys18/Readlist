@@ -11,10 +11,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.karthihegde.readlist.navigation.Navigation
 import com.karthihegde.readlist.ui.theme.ReadlistTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Main Activity Class
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
