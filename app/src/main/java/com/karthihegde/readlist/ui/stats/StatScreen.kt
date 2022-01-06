@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.karthihegde.readlist.database.BookViewModel
+import com.karthihegde.readlist.viewmodels.BookViewModel
 import com.karthihegde.readlist.utils.groupByStatus
 
 /**

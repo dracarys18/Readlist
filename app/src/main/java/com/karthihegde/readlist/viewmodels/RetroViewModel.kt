@@ -1,7 +1,9 @@
-package com.karthihegde.readlist.retrofit
+package com.karthihegde.readlist.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.karthihegde.readlist.retrofit.RetroRepository
+import com.karthihegde.readlist.retrofit.RetroState
 import com.karthihegde.readlist.retrofit.data.BookList
 import com.karthihegde.readlist.retrofit.data.Item
 import dagger.hilt.android.lifecycle.HiltViewModel

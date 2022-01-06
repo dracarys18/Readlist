@@ -23,8 +23,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.database.BookViewModel
-import com.karthihegde.readlist.retrofit.ClickBookViewModel
+import com.karthihegde.readlist.viewmodels.BookViewModel
+import com.karthihegde.readlist.viewmodels.ClickBookViewModel
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.getCurrencySymbol

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.database.BookViewModel
+import com.karthihegde.readlist.viewmodels.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 
 /**

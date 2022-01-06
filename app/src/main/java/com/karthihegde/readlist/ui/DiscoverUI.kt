@@ -38,11 +38,12 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.retrofit.RetroState
-import com.karthihegde.readlist.retrofit.RetroViewModel
+import com.karthihegde.readlist.viewmodels.RetroViewModel
 import com.karthihegde.readlist.retrofit.data.ImageLinks
 import com.karthihegde.readlist.retrofit.data.Item
 import com.karthihegde.readlist.utils.PLACEHOLDER_IMAGE
 import com.karthihegde.readlist.utils.getCurrencySymbol
+import com.karthihegde.readlist.viewmodels.SearchViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
  */
 @ExperimentalComposeUiApi
 @Composable
-fun SearchView(retroViewModel: RetroViewModel) {
+fun SearchView(retroViewModel: RetroViewModel, searchViewModel: SearchViewModel) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope { Dispatchers.IO }
@@ -59,6 +60,7 @@ fun SearchView(retroViewModel: RetroViewModel) {
     var leadingIcon by remember {
         mutableStateOf(Icons.Filled.Search)
     }
+    val text by searchViewModel.text.collectAsState(initial = TextFieldValue(""))
     val bookList by retroViewModel.bookList.collectAsState(initial = null)
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     Surface(
@@ -67,11 +69,10 @@ fun SearchView(retroViewModel: RetroViewModel) {
         contentColor = Color.White
     ) {
         val borderColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
-        val text = SearchState.text.value
         TextField(
             value = text,
             onValueChange = { value ->
-                SearchState.text.value = value
+                searchViewModel.onValueChange(value)
             },
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -88,7 +89,7 @@ fun SearchView(retroViewModel: RetroViewModel) {
             leadingIcon = {
                 IconButton(onClick = {
                     if (leadingIcon == Icons.Filled.Clear && text.text.isNotEmpty())
-                        SearchState.text.value = TextFieldValue("")
+                        searchViewModel.onValueChange(TextFieldValue(""))
                     else if (leadingIcon == Icons.Filled.Clear && text.text.isEmpty())
                         focusManager.clearFocus(true)
                     else if (leadingIcon == Icons.Filled.Search && text.text.isEmpty()) {
@@ -246,10 +247,14 @@ fun BookImage(
  */
 @ExperimentalComposeUiApi
 @Composable
-fun DiscoverScreen(retroViewModel: RetroViewModel, navHostController: NavController) {
+fun DiscoverScreen(
+    searchViewModel: SearchViewModel,
+    retroViewModel: RetroViewModel,
+    navHostController: NavController
+) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(topBar = {
-            SearchView(retroViewModel = retroViewModel)
+            SearchView(retroViewModel = retroViewModel, searchViewModel = searchViewModel)
         }, bottomBar = { BottomBar(navHostController) }) {
             Column(modifier = Modifier.padding(it)) {
                 DisplayResults(
@@ -298,11 +303,4 @@ fun DisplayResults(
         }
 
     }
-}
-
-/**
- *
- */
-object SearchState {
-    var text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
 }

@@ -26,7 +26,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.database.BookViewModel
+import com.karthihegde.readlist.viewmodels.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.retrofit.data.ImageLinks
