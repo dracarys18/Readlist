@@ -15,6 +15,9 @@ import javax.inject.Inject
 class RetroViewModel @Inject constructor(
     private val retroRepository: RetroRepository
 ) : ViewModel() {
+    private val _retroState: MutableStateFlow<RetroState<BookList>> =
+        MutableStateFlow(RetroState.PlaceHolder())
+    val retroState: Flow<RetroState<BookList>> = _retroState
     private val _isError: MutableStateFlow<Boolean> =
         MutableStateFlow(false)
     val isError: Flow<Boolean> = _isError
@@ -24,17 +27,21 @@ class RetroViewModel @Inject constructor(
     fun resetAll() {
         _bookList.value = null
         _isError.value = false
+        _retroState.value = RetroState.PlaceHolder()
     }
 
     fun getBooks(query: String) {
         viewModelScope.launch {
+            _retroState.value = RetroState.Loading()
             when (val result = retroRepository.getBooks(query = query)) {
                 is RetroState.Failure -> {
                     _isError.value = true
+                    _retroState.value = RetroState.Failure(message = result.message)
                 }
                 is RetroState.Success -> {
                     _bookList.value = result.data
                     _isError.value = false
+                    _retroState.value = RetroState.Success(data = result.data)
                 }
                 else -> {}
             }
@@ -49,6 +56,9 @@ class RetroViewModel @Inject constructor(
 class ClickBookViewModel @Inject constructor(
     private val retroRepository: RetroRepository
 ) : ViewModel() {
+    private val _retroState: MutableStateFlow<RetroState<Item>> =
+        MutableStateFlow(RetroState.PlaceHolder())
+    val retroState: Flow<RetroState<Item>> = _retroState
     private val _isError: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isError: Flow<Boolean> = _isError
     private val _clickBook: MutableStateFlow<Item?> = MutableStateFlow(null)
@@ -61,13 +71,16 @@ class ClickBookViewModel @Inject constructor(
      */
     fun onValueChange(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            _retroState.value = RetroState.Loading()
             when (val result = retroRepository.getBooksFromId(id = id)) {
                 is RetroState.Failure -> {
                     _isError.value = true
+                    _retroState.value = RetroState.Failure(message = result.message)
                 }
                 is RetroState.Success -> {
                     _isError.value = false
                     _clickBook.value = result.data
+                    _retroState.value = RetroState.Success(data = result.data)
                 }
                 else -> {}
             }

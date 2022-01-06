@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class BookList(
-    val items: List<Item>,
+    val items: List<Item>?,
     val kind: String,
     val totalItems: Int
 ) : Parcelable

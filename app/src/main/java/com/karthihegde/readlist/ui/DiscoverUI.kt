@@ -1,6 +1,5 @@
 package com.karthihegde.readlist.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
+import com.karthihegde.readlist.retrofit.RetroState
 import com.karthihegde.readlist.retrofit.RetroViewModel
 import com.karthihegde.readlist.retrofit.data.ImageLinks
 import com.karthihegde.readlist.retrofit.data.Item
@@ -100,11 +100,13 @@ fun SearchView(retroViewModel: RetroViewModel) {
                 }
             },
             trailingIcon = {
-                bookList?.let {
-                    IconButton(onClick = {
-                        retroViewModel.resetAll()
-                    }) {
-                        Icon(Icons.Rounded.ClearAll, contentDescription = "Clear all Button")
+                bookList?.let { bookList ->
+                    bookList.items?.let {
+                        IconButton(onClick = {
+                            retroViewModel.resetAll()
+                        }) {
+                            Icon(Icons.Rounded.ClearAll, contentDescription = "Clear all Button")
+                        }
                     }
                 }
             },
@@ -272,14 +274,16 @@ fun DisplayResults(
     val state = rememberLazyListState()
     val bookList by retroViewModel.bookList.collectAsState(initial = null)
     val isError by retroViewModel.isError.collectAsState(initial = false)
-    bookList?.items?.let { bookResults ->
-        LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            items(bookResults) { item ->
-                SearchResults(navHostController = navHostController, item = item)
+    val retroState by retroViewModel.retroState.collectAsState(RetroState.PlaceHolder())
+    bookList?.let { bookResults ->
+        bookResults.items?.let { items ->
+            LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                items(items) { item ->
+                    SearchResults(navHostController = navHostController, item = item)
+                }
             }
         }
-    } ?: run {
-        if (isError) {
+        if ((retroState is RetroState.Success && bookList?.items.isNullOrEmpty()) || isError) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -292,6 +296,7 @@ fun DisplayResults(
                 )
             }
         }
+
     }
 }
 
