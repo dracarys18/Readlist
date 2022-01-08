@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.karthihegde.readlist.viewmodels.BookViewModel
-import com.karthihegde.readlist.utils.groupByStatus
 
 /**
  * Main view of Stat Screen
@@ -29,8 +28,8 @@ import com.karthihegde.readlist.utils.groupByStatus
 fun StatScreen(viewModel: BookViewModel, navController: NavController) {
     Scaffold(topBar = { TopAppBar(navController = navController) }) {
         val books by viewModel.getAllData.collectAsState(initial = null)
+        val group by viewModel.groupByStatus.collectAsState(initial = mapOf())
         if (!books.isNullOrEmpty()) {
-            val group = books!!.groupByStatus()
             val mapStats = group.map { (key, value) -> key to value.size.toFloat() }
                 .sortedBy { (_, valu) -> valu }.toMap()
             val keys = mapStats.keys.toList()

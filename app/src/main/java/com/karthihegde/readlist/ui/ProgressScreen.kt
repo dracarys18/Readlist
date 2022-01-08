@@ -26,11 +26,10 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.karthihegde.readlist.database.BookData
-import com.karthihegde.readlist.viewmodels.BookViewModel
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.retrofit.data.ImageLinks
-import com.karthihegde.readlist.utils.groupByStatus
+import com.karthihegde.readlist.viewmodels.BookViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -43,6 +42,7 @@ import kotlinx.coroutines.launch
 fun ProgressView(viewModel: BookViewModel, navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     val scaffoldCoroutineScope = rememberCoroutineScope()
+    val group by viewModel.groupByStatus.collectAsState(initial = mapOf())
     Scaffold(scaffoldState = scaffoldState, topBar = {
         TopProgressBar(navController)
     }, bottomBar = {
@@ -64,7 +64,7 @@ fun ProgressView(viewModel: BookViewModel, navController: NavController) {
                             highlight = PlaceholderHighlight.fade()
                         )
                 ) {
-                    val group = bookData.groupByStatus()
+
                     group.forEach { (initial, bookList) ->
                         item {
                             Text(

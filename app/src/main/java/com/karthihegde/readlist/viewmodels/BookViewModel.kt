@@ -19,6 +19,7 @@ class BookViewModel
     private val repository: BookRepository
 ) : ViewModel() {
     val getAllData: Flow<List<BookData>> = repository.readBookData
+    val groupByStatus: Flow<Map<String, List<BookData>>> = repository.groupByStatus
 
     /**
      * Insert function that's exposed to use outside

@@ -1,6 +1,9 @@
 package com.karthihegde.readlist.database
 
+import com.karthihegde.readlist.utils.groupByStatus
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 /**
  * Repository Class for Book Database
@@ -10,6 +13,11 @@ import kotlinx.coroutines.flow.Flow
 class BookRepository(private val bookDatabaseDao: BookDao) {
 
     val readBookData: Flow<List<BookData>> = bookDatabaseDao.getAllBooks()
+    val groupByStatus: Flow<Map<String, List<BookData>>> = flow {
+        readBookData.collect {
+            emit(it.groupByStatus())
+        }
+    }
 
     /**
      * Abstract insert function
