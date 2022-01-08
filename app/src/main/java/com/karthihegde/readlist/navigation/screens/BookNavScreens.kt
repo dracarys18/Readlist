@@ -10,11 +10,6 @@ sealed class BookNavScreens(val route: String) {
     object DetailView : BookNavScreens("detail_view")
 
     /**
-     * EditView Navigation Object
-     */
-    object EditView : BookNavScreens("edit_view")
-
-    /**
      * @param args Args to append
      */
     fun withArgs(vararg args: String): String {

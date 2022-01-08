@@ -1,10 +1,13 @@
 package com.karthihegde.readlist.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Analytics
@@ -15,8 +18,14 @@ import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,6 +41,7 @@ import com.karthihegde.readlist.retrofit.data.ImageLinks
 import com.karthihegde.readlist.viewmodels.BookViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 /**
  * The Main Screen of Book Progress View
@@ -177,6 +187,96 @@ fun BookProgress(
     scaffoldState: ScaffoldState,
     scaffoldCoroutineScope: CoroutineScope
 ) {
+    var editView by remember {
+        mutableStateOf(false)
+    }
+
+    //EditView Code
+    if (editView) {
+        val context = LocalContext.current
+        val focusRequester = remember { FocusRequester() }
+        val bookData by viewModel.getBookFromId(id = data.id).collectAsState(initial = null)
+        var newPage = 0
+        var isError by remember {
+            mutableStateOf(false)
+        }
+        var text by remember {
+            mutableStateOf("")
+        }
+        val pagesRead = bookData?.pagesRead?.toString() ?: ""
+        val totalPages = bookData?.totalPages ?: Int.MAX_VALUE
+        val onDoneAction: () -> Unit = {
+            if (!isError && text.isNotEmpty()) {
+                scaffoldCoroutineScope.launch {
+                    viewModel.updatePages(pages = newPage, id = data.id)
+                }
+                editView = false
+            } else
+                Toast.makeText(
+                    context,
+                    "Enter a Proper Page Number",
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+        AlertDialog(
+            onDismissRequest = {
+                editView = false
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDoneAction()
+                }) {
+                    Text(text = "Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { editView = false }) {
+                    Text(text = "Cancel")
+                }
+            },
+            text = {
+                OutlinedTextField(
+                    value = text,
+                    label = {
+                        Text(text = "Pages Read")
+                    },
+                    onValueChange = { value ->
+                        text = value
+                        isError = try {
+                            newPage = abs(value.toInt())
+                            newPage > totalPages
+                        } catch (e: NumberFormatException) {
+                            true
+                        }
+                    },
+                    placeholder = { Text(pagesRead, textAlign = TextAlign.Center) },
+                    isError = isError,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        autoCorrect = true,
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { onDoneAction() }),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(100.dp)
+                        .focusRequester(focusRequester = focusRequester),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = MaterialTheme.colors.background,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+                LaunchedEffect(Unit) {
+                    focusRequester.requestFocus()
+                }
+            }
+        )
+    }
+
+    //Progress View Code
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -248,7 +348,7 @@ fun BookProgress(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = {
-                    navController.navigate(BookNavScreens.EditView.withArgs(data.id))
+                    editView = true
                 }) {
                     Icon(Icons.Rounded.Edit, contentDescription = null)
                 }

@@ -12,11 +12,14 @@ import androidx.navigation.navArgument
 import com.karthihegde.readlist.navigation.screens.BookNavScreens
 import com.karthihegde.readlist.navigation.screens.GeneralScreens
 import com.karthihegde.readlist.navigation.screens.Screens
-import com.karthihegde.readlist.viewmodels.ClickBookViewModel
-import com.karthihegde.readlist.viewmodels.RetroViewModel
-import com.karthihegde.readlist.ui.*
+import com.karthihegde.readlist.ui.BookDetailView
+import com.karthihegde.readlist.ui.CollectionScreen
+import com.karthihegde.readlist.ui.DiscoverScreen
+import com.karthihegde.readlist.ui.ProgressView
 import com.karthihegde.readlist.ui.stats.StatScreen
 import com.karthihegde.readlist.viewmodels.BookViewModel
+import com.karthihegde.readlist.viewmodels.ClickBookViewModel
+import com.karthihegde.readlist.viewmodels.RetroViewModel
 import com.karthihegde.readlist.viewmodels.SearchViewModel
 
 /**
@@ -50,20 +53,6 @@ fun Navigation(
                     clickBookViewModel = clickBookViewModel,
                     viewModel = bookViewModel,
                     navHostController = navHostController
-                )
-            }
-        }
-        composable(
-            route = BookNavScreens.EditView.route + "/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
-        ) { ids ->
-            ids.arguments?.getString("id")?.let { id ->
-                EditBookProgress(
-                    viewModel = bookViewModel,
-                    navController = navHostController,
-                    id = id
                 )
             }
         }
