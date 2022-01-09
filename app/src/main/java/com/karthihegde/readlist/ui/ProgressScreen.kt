@@ -1,11 +1,13 @@
 package com.karthihegde.readlist.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -203,6 +205,7 @@ fun BookProgress(
         var text by remember {
             mutableStateOf("")
         }
+        val labelColor = if (isSystemInDarkTheme()) Color(0xFF64B5F6) else Color(0xFF3D5AFE)
         val pagesRead = bookData?.pagesRead?.toString() ?: ""
         val totalPages = bookData?.totalPages ?: Int.MAX_VALUE
         val onDoneAction: () -> Unit = {
@@ -223,14 +226,26 @@ fun BookProgress(
                 editView = false
             },
             confirmButton = {
-                TextButton(onClick = {
-                    onDoneAction()
-                }) {
+                OutlinedButton(
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent
+                    ),
+                    border = BorderStroke(0.7.dp, color = MaterialTheme.colors.onBackground),
+                    shape = RoundedCornerShape(50.dp),
+                    onClick = {
+                        onDoneAction()
+                    }) {
                     Text(text = "Confirm")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { editView = false }) {
+                OutlinedButton(
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent
+                    ),
+                    border = BorderStroke(0.7.dp, color = MaterialTheme.colors.onBackground),
+                    shape = RoundedCornerShape(50.dp),
+                    onClick = { editView = false }) {
                     Text(text = "Cancel")
                 }
             },
@@ -264,9 +279,11 @@ fun BookProgress(
                         .size(100.dp)
                         .focusRequester(focusRequester = focusRequester),
                     colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onBackground,
                         backgroundColor = MaterialTheme.colors.background,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedLabelColor = labelColor
                     )
                 )
                 LaunchedEffect(Unit) {
